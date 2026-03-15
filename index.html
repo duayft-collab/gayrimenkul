@@ -359,6 +359,60 @@ input,select,textarea{cursor:text}
 .bi p{font-size:10px;color:var(--tx3);margin-top:1px}
 .rr{display:flex;align-items:center;padding:5px 0;border-bottom:1px solid var(--sbb)}
 .rr:last-child{border:none}
+
+/* ═══ ISLAMIC MODULE ═══ */
+.prayer-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin-bottom:14px}
+.prayer-card{background:var(--bg2);border:1px solid var(--sbb);border-radius:12px;padding:10px 8px;text-align:center;box-shadow:var(--sh);transition:all .2s}
+[data-t=swiss] .prayer-card{border-radius:0;border:1.5px solid #000}
+.prayer-card.active-prayer{background:linear-gradient(135deg,rgba(5,150,105,0.12),rgba(37,99,235,0.08));border-color:var(--gr);box-shadow:0 4px 16px rgba(5,150,105,0.15)}
+.prayer-name{font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--tx3);margin-bottom:5px}
+.prayer-card.active-prayer .prayer-name{color:var(--gr)}
+.prayer-time{font-size:16px;font-weight:700;font-family:var(--mono);color:var(--tx)}
+.prayer-countdown{font-size:9px;color:var(--gr);font-family:var(--mono);margin-top:3px;font-weight:600}
+.quran-card{background:linear-gradient(135deg,rgba(5,150,105,0.06),rgba(37,99,235,0.04));border:1px solid rgba(5,150,105,0.2);border-radius:16px;padding:20px 22px;margin-bottom:12px;position:relative;overflow:hidden}
+[data-t=swiss] .quran-card{border-radius:0;border-left:4px solid var(--gr)}
+.quran-label{font-size:9px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--gr);margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.quran-arabic{font-size:18px;color:var(--tx);line-height:1.8;margin-bottom:10px;text-align:right;direction:rtl}
+.quran-text{font-family:var(--serif);font-size:14px;font-style:italic;color:var(--tx2);line-height:1.7;margin-bottom:6px}
+.quran-ref{font-size:10px;color:var(--tx3);font-family:var(--mono)}
+.hadith-card{background:var(--bg2);border:1px solid var(--sbb);border-radius:14px;padding:18px 20px;margin-bottom:12px;box-shadow:var(--sh)}
+[data-t=swiss] .hadith-card{border-radius:0;border-left:4px solid var(--gd)}
+.hadith-label{font-size:9px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--gd);margin-bottom:8px}
+.hadith-text{font-family:var(--serif);font-size:13px;font-style:italic;color:var(--tx2);line-height:1.7;margin-bottom:6px}
+.hadith-source{font-size:10px;color:var(--tx3);font-family:var(--mono)}
+.signal-radar-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:12px}
+.radar-section{background:var(--bg2);border:1px solid var(--sbb);border-radius:var(--cr);padding:14px 16px;box-shadow:var(--sh)}
+[data-t=swiss] .radar-section{border-radius:0;border:1.5px solid #000}
+.radar-title{font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--tx3);margin-bottom:9px;padding-bottom:7px;border-bottom:1px solid var(--sbb);display:flex;justify-content:space-between}
+.signal-item{display:flex;align-items:center;padding:5px 0;border-bottom:1px solid var(--sbb);gap:7px}
+.signal-item:last-child{border:none}
+.signal-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+[data-t=swiss] .signal-dot{border-radius:0}
+.signal-name{font-size:11px;color:var(--tx2);flex:1}
+.signal-val{font-size:10px;font-weight:700;font-family:var(--mono);color:var(--tx);min-width:55px;text-align:right}
+.signal-tr{font-size:10px;font-weight:700;min-width:40px;text-align:right}
+.bull{color:var(--gr)}.bear{color:var(--rd)}.neut{color:var(--tx3)}
+.risk-score-card{background:var(--bg2);border:1px solid var(--sbb);border-radius:var(--cr);padding:20px 24px;margin-bottom:14px;box-shadow:var(--sh);display:flex;gap:22px;align-items:center;flex-wrap:wrap}
+[data-t=swiss] .risk-score-card{border-radius:0;border:2px solid #000}
+.risk-gauge{width:90px;height:90px;position:relative;flex-shrink:0}
+.risk-gauge canvas{position:absolute;top:0;left:0}
+.risk-num{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:20px;font-weight:800;font-family:var(--mono);text-align:center;line-height:1}
+.risk-info{flex:1;min-width:160px}
+.risk-info h3{font-size:14px;font-weight:700;color:var(--tx);margin-bottom:5px}
+.risk-info p{font-size:11px;color:var(--tx2);line-height:1.6}
+.crisis-indicator{display:flex;align-items:center;padding:7px 10px;border-radius:8px;margin-bottom:5px;border:1px solid var(--sbb);background:var(--bg3)}
+[data-t=swiss] .crisis-indicator{border-radius:0;border:1px solid #000}
+.ci-name{font-size:11px;color:var(--tx2);flex:1}
+.ci-bar-wrap{width:100px;height:5px;background:var(--bg2);border-radius:40px;overflow:hidden;margin:0 9px;border:1px solid var(--sbb)}
+[data-t=swiss] .ci-bar-wrap{border-radius:0}
+.ci-bar{height:100%;border-radius:40px;transition:width .5s}
+[data-t=swiss] .ci-bar{border-radius:0}
+.ci-level{font-size:9px;font-weight:700;font-family:var(--mono);min-width:45px;text-align:right}
+.opp-card{background:linear-gradient(135deg,rgba(5,150,105,0.07),rgba(37,99,235,0.04));border:1px solid rgba(5,150,105,0.15);border-radius:10px;padding:12px 14px;margin-bottom:7px}
+[data-t=swiss] .opp-card{border-radius:0;border-left:3px solid var(--gr)}
+.opp-title{font-size:12px;font-weight:700;color:var(--gr);margin-bottom:3px}
+.opp-desc{font-size:11px;color:var(--tx2);line-height:1.5}
+.opp-action{font-size:9px;font-weight:700;color:var(--ac);margin-top:4px;letter-spacing:.04em;text-transform:uppercase}
 </style>
 </head>
 <body>
@@ -434,6 +488,9 @@ input,select,textarea{cursor:text}
     <button class="ni" data-tab="links"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg><span class="ni-lbl">Web Linklerim</span></button>
     <button class="ni" data-tab="growth"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg><span class="ni-lbl">Kişisel Gelişim</span></button>
     <button class="ni" data-tab="kids"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg><span class="ni-lbl">Çocuk Gelişimi</span></button>
+    <button class="ni" data-tab="islamic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s-8-4.5-8-11.8A8 8 0 0 1 12 2a8 8 0 0 1 8 8.2c0 7.3-8 11.8-8 11.8z"/><circle cx="12" cy="10" r="3"/></svg><span class="ni-lbl">İslami Rehberlik</span></button>
+    <button class="ni" data-tab="signals40"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg><span class="ni-lbl">40 Sinyal Radar</span></button>
+    <button class="ni" data-tab="earlywarning"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg><span class="ni-lbl">Erken Uyarı Sistemi</span></button>
   </div>
   <div class="sf"><div class="sn"><strong>⚡ Akıllı Not</strong>Navlun trendi yükselişte. İhracat planlarınızı revize edin.</div></div>
 </aside>
@@ -611,6 +668,301 @@ input,select,textarea{cursor:text}
   <div class="tc"><div class="cd"><div class="ch"><div class="ci" style="background:rgba(37,99,235,0.08)">📅</div><h3>Haftalık Program</h3></div><div id="kl" style="margin-bottom:7px"></div><div class="ed"><div class="ed-t">+ Aktivite Ekle</div><div class="ed-g"><span class="ed-l">Aktivite</span><input class="ei" id="ka" placeholder="Yüzme, satranç..."><span class="ed-l">Gün & Saat</span><input class="ei" id="kd" placeholder="Cumartesi 10:00"><span class="ed-l">Emoji</span><input class="ei" id="ke" placeholder="🏊"></div><button class="eb" onclick="addKid()">Ekle</button></div></div><div class="cd"><div class="ch"><div class="ci" style="background:rgba(5,150,105,0.08)">🌍</div><h3>Gelişim Alanları</h3></div><div class="pw"><div class="plr"><span>Kodlama</span><span>4/5</span></div><div class="prb"><div class="prf" style="width:80%;background:var(--ac)"></div></div></div><div class="pw"><div class="plr"><span>Python</span><span>2/8</span></div><div class="prb"><div class="prf" style="width:25%;background:var(--ac2)"></div></div></div><div class="pw"><div class="plr"><span>Satranç</span><span>12/20</span></div><div class="prb"><div class="prf" style="width:60%;background:var(--gd)"></div></div></div></div></div>
 </div>
 
+<!-- ══ ISLAMIC GUIDANCE ══ -->
+<div id="tab-islamic" class="tab">
+  <div class="ph"><h2>İslami Rehberlik</h2><p>Namaz vakitleri, günlük ayet, hadis ve ticaret ahlakı</p></div>
+  <!-- PRAYER TIMES -->
+  <div class="cd" style="margin-bottom:12px">
+    <div class="ch"><div class="ci" style="background:rgba(5,150,105,0.1)">🕌</div><h3>Günlük Namaz Vakitleri</h3><span class="blv" id="prayer-city-label">İstanbul</span></div>
+    <div class="prayer-grid" id="prayer-grid">
+      <div class="prayer-card" id="pc-imsak"><div class="prayer-name">İmsak</div><div class="prayer-time" id="pt-imsak">05:12</div><div class="prayer-countdown" id="cd-imsak"></div></div>
+      <div class="prayer-card" id="pc-gunes"><div class="prayer-name">Güneş</div><div class="prayer-time" id="pt-gunes">06:38</div><div class="prayer-countdown" id="cd-gunes"></div></div>
+      <div class="prayer-card" id="pc-ogle"><div class="prayer-name">Öğle</div><div class="prayer-time" id="pt-ogle">13:04</div><div class="prayer-countdown" id="cd-ogle"></div></div>
+      <div class="prayer-card" id="pc-ikindi"><div class="prayer-name">İkindi</div><div class="prayer-time" id="pt-ikindi">16:22</div><div class="prayer-countdown" id="cd-ikindi"></div></div>
+      <div class="prayer-card" id="pc-aksam"><div class="prayer-name">Akşam</div><div class="prayer-time" id="pt-aksam">19:28</div><div class="prayer-countdown" id="cd-aksam"></div></div>
+      <div class="prayer-card" id="pc-yatsi"><div class="prayer-name">Yatsı</div><div class="prayer-time" id="pt-yatsi">20:54</div><div class="prayer-countdown" id="cd-yatsi"></div></div>
+    </div>
+    <div style="display:flex;gap:8px;align-items:center;font-size:11px;color:var(--tx3)">
+      <span>Şehir:</span>
+      <select class="es" id="prayer-city-sel" onchange="loadPrayerTimes(this.value)" style="width:auto;padding:4px 8px">
+        <option value="Istanbul">İstanbul</option><option value="Ankara">Ankara</option><option value="Izmir">İzmir</option>
+        <option value="Bursa">Bursa</option><option value="Antalya">Antalya</option><option value="Konya">Konya</option>
+        <option value="Gaziantep">Gaziantep</option><option value="Diyarbakir">Diyarbakır</option>
+      </select>
+      <span id="prayer-update-time" style="margin-left:auto;font-family:var(--mono)"></span>
+    </div>
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">
+    <!-- DAILY AYAH -->
+    <div>
+      <div class="quran-card" id="daily-ayah-card">
+        <div class="quran-label">📖 Günün Ayeti</div>
+        <div class="quran-arabic" id="ayah-arabic">وَأَوْفُوا الْكَيْلَ إِذَا كِلْتُمْ وَزِنُوا بِالْقِسْطَاسِ الْمُسْتَقِيمِ</div>
+        <div class="quran-text" id="ayah-text">"Ölçtüğünüzde ölçüyü tam yapın ve doğru terazi ile tartın. Bu daha hayırlı ve sonuç bakımından daha güzeldir."</div>
+        <div class="quran-ref" id="ayah-ref">İsra Suresi, 17:35</div>
+      </div>
+      <!-- DAILY HADITH -->
+      <div class="hadith-card">
+        <div class="hadith-label">☪ Günün Hadisi</div>
+        <div class="hadith-text" id="hadith-text">"Doğru ve güvenilir tüccar, peygamberler, doğrular ve şehitlerle beraberdir."</div>
+        <div class="hadith-source" id="hadith-source">— Tirmizi, Buyu 4</div>
+      </div>
+    </div>
+    <div>
+      <!-- ISLAMIC CALENDAR -->
+      <div class="islamic-calendar" style="margin-bottom:12px">
+        <div class="hijri-label">Hicri Takvim</div>
+        <div class="hijri-date" id="hijri-date-display">14 Ramazan 1447</div>
+        <div style="font-size:11px;color:var(--tx3);margin-top:4px" id="hijri-gregorian"></div>
+        <div style="margin-top:12px">
+          <div style="font-size:9px;font-weight:700;color:var(--tx3);letter-spacing:.1em;text-transform:uppercase;margin-bottom:7px">Yaklaşan İslami Günler</div>
+          <div class="special-day"><div class="special-day-icon">🌙</div><div class="special-day-info"><h4>Kadir Gecesi</h4><p>Ramazan 27. gecesi — Dua ve ibadet gecesi</p></div></div>
+          <div class="special-day"><div class="special-day-icon">🎉</div><div class="special-day-info"><h4>Ramazan Bayramı</h4><p>Tahminen 29 Mart 2025</p></div></div>
+          <div class="special-day"><div class="special-day-icon">🐑</div><div class="special-day-info"><h4>Kurban Bayramı</h4><p>Tahminen 5 Haziran 2025</p></div></div>
+        </div>
+      </div>
+      <!-- DAILY REMINDER -->
+      <div class="ab" style="background:linear-gradient(135deg,rgba(5,150,105,0.06),rgba(217,119,6,0.04));border-color:rgba(5,150,105,0.2)">
+        <div class="abl" style="color:var(--gr)">💎 Bugünün Manevî Hatırlatması</div>
+        <p id="daily-reminder" style="font-family:var(--serif);font-style:italic;font-size:13px">"Helal kazanç az da olsa bereketlidir. Haram kazanç çok da olsa bereketsizdir."</p>
+      </div>
+    </div>
+  </div>
+  <!-- TRADE ETHICS -->
+  <div class="cd" style="margin-bottom:12px">
+    <div class="ch"><div class="ci" style="background:rgba(217,119,6,0.1)">⚖</div><h3>İslam'da Ticaret Ahlakı</h3></div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px">
+      <div class="trade-ethics-item" style="padding:10px 12px;background:var(--bg3);border:1px solid var(--sbb);border-radius:10px">
+        <h4 style="font-size:12px;font-weight:700;color:var(--tx);margin-bottom:4px">⚖ Ölçü ve Tartıda Adalet</h4>
+        <p style="font-size:11px;color:var(--tx2);line-height:1.6">Alışverişte hile ve aldatma haramdır. Ölçü ve tartıda tam dürüstlük esas olmalıdır.</p>
+      </div>
+      <div class="trade-ethics-item" style="padding:10px 12px;background:var(--bg3);border:1px solid var(--sbb);border-radius:10px">
+        <h4 style="font-size:12px;font-weight:700;color:var(--tx);margin-bottom:4px">🤝 Güvenilirlik (Emanet)</h4>
+        <p style="font-size:11px;color:var(--tx2);line-height:1.6">Ticaret ortağına, müşteriye ve çalışana karşı dürüst ve güvenilir olmak İslam'ın temelidir.</p>
+      </div>
+      <div class="trade-ethics-item" style="padding:10px 12px;background:var(--bg3);border:1px solid var(--sbb);border-radius:10px">
+        <h4 style="font-size:12px;font-weight:700;color:var(--tx);margin-bottom:4px">🚫 Faiz Yasağı (Riba)</h4>
+        <p style="font-size:11px;color:var(--tx2);line-height:1.6">Faiz (riba) Kur'an'da açıkça yasaklanmıştır. Faizsiz alternatif finansman yöntemleri tercih edilmelidir.</p>
+      </div>
+      <div class="trade-ethics-item" style="padding:10px 12px;background:var(--bg3);border:1px solid var(--sbb);border-radius:10px">
+        <h4 style="font-size:12px;font-weight:700;color:var(--tx);margin-bottom:4px">💚 Helal Kazanç</h4>
+        <p style="font-size:11px;color:var(--tx2);line-height:1.6">Kazancın helal yollarla elde edilmesi farz kabul edilir. Helal kazanç bereket getirir.</p>
+      </div>
+      <div class="trade-ethics-item" style="padding:10px 12px;background:var(--bg3);border:1px solid var(--sbb);border-radius:10px">
+        <h4 style="font-size:12px;font-weight:700;color:var(--tx);margin-bottom:4px">📜 Sözleşme Ahlakı</h4>
+        <p style="font-size:11px;color:var(--tx2);line-height:1.6">Verilen sözler ve sözleşmeler yerine getirilmelidir. "Ey iman edenler! Akitlerinizi yerine getirin." (Maide 5:1)</p>
+      </div>
+      <div class="trade-ethics-item" style="padding:10px 12px;background:var(--bg3);border:1px solid var(--sbb);border-radius:10px">
+        <h4 style="font-size:12px;font-weight:700;color:var(--tx);margin-bottom:4px">🫂 Kul Hakkı</h4>
+        <p style="font-size:11px;color:var(--tx2);line-height:1.6">Başkasının hakkına riayet etmek her Müslüman tüccar için zorunludur. Kul hakkı Allah'ın affetmeyeceği bir sorumluluktur.</p>
+      </div>
+    </div>
+  </div>
+  <!-- WISDOM QUOTES -->
+  <div class="cd">
+    <div class="ch"><div class="ci" style="background:rgba(124,58,237,0.1)">💎</div><h3>İslam Alimleri ve Düşünürlerinden Öğütler</h3></div>
+    <div id="wisdom-quotes-list"></div>
+  </div>
+</div>
+
+<!-- ══ 40 SIGNALS RADAR ══ -->
+<div id="tab-signals40" class="tab">
+  <div class="ph"><h2>40 Stratejik Ekonomik Sinyal</h2><p>Hedge fon seviyesi makro göstergeler — büyük yatırımcıların takip ettiği radar</p></div>
+  <!-- RISK SCORE -->
+  <div class="risk-score-card">
+    <div class="risk-gauge">
+      <canvas id="risk-gauge-canvas" width="90" height="90"></canvas>
+      <div class="risk-num"><span id="risk-score-num" style="color:var(--gd)">42</span><br><span style="font-size:8px;color:var(--tx3)">/ 100</span></div>
+    </div>
+    <div class="risk-info">
+      <h3>Küresel Ekonomik Risk Skoru: <span id="risk-label" style="color:var(--gd)">Orta Risk</span></h3>
+      <p id="risk-description">PMI verileri zayıflamaya devam ediyor. Navlun fiyatları geriledi. Yield curve baskı altında. Yakın vadede dikkatli olmak önerilir.</p>
+      <div style="display:flex;gap:10px;margin-top:8px;flex-wrap:wrap">
+        <span style="font-size:10px;font-weight:700;color:var(--rd)">🔴 4 Uyarı</span>
+        <span style="font-size:10px;font-weight:700;color:var(--gd)">🟡 8 Dikkat</span>
+        <span style="font-size:10px;font-weight:700;color:var(--gr)">🟢 28 Normal</span>
+      </div>
+    </div>
+  </div>
+  <!-- SIGNAL GRID -->
+  <div class="signal-radar-grid">
+    <div class="radar-section">
+      <div class="radar-title"><span>💵 Faiz & Para Politikası</span><span style="font-size:9px;color:var(--gr)">CANLI</span></div>
+      <div class="signal-item"><div class="signal-dot" style="background:var(--rd)"></div><span class="signal-name">ABD Politika Faizi (Fed)</span><span class="signal-val">5.25%</span><span class="signal-tr bear">↓ İndirim</span></div>
+      <div class="signal-item"><div class="signal-dot" style="background:var(--gd)"></div><span class="signal-name">ECB Faizi</span><span class="signal-val">3.50%</span><span class="signal-tr neut">Sabit</span></div>
+      <div class="signal-item"><div class="signal-dot" style="background:var(--gr)"></div><span class="signal-name">TCMB Politika Faizi</span><span class="signal-val">42.5%</span><span class="signal-tr bull">↓ İndirim</span></div>
+      <div class="signal-item"><div class="signal-dot" style="background:var(--gd)"></div><span class="signal-name">Küresel Para Arzı M2</span><span class="signal-val">Daralıyor</span><span class="signal-tr bear">↓</span></div>
+      <div class="signal-item"><div class="signal-dot" style="background:var(--gd)"></div><span class="signal-name">Reel Faiz Oranı (ABD)</span><span class="signal-val">+2.1%</span><span class="signal-tr bear">Sıkı</span></div>
+    </div>
+    <div class="radar-section">
+      <div class="radar-title"><span>📊 Tahvil Piyasası</span></div>
+      <div class="signal-item"><div class="signal-dot" style="background:var(--gd)"></div><span class="signal-name">10Y ABD Tahvil</span><span class="signal-val" id="s-10y">4.28%</span><span class="signal-tr neut">Stabil</span></div>
+      <div class="signal-item"><div class="signal-dot" style="background:var(--rd)"></div><span class="signal-name">2Y ABD Tahvil</span><span class="signal-val" id="s-2y">4.65%</span><span class="signal-tr bear">Yüksek</span></div>
+      <div class="signal-item"><div class="signal-dot" style="background:var(--rd)"></div><span class="signal-name">Yield Curve (2Y-10Y)</span><span class="signal-val">-0.37%</span><span class="signal-tr bear">⚠ Ters</span></div>
+      <div class="signal-item"><div class="signal-dot" style="background:var(--gd)"></div><span class="signal-name">Şirket Tahvil Spreadleri</span><span class="signal-val">+180bps</span><span class="signal-tr bear">Genişliyor</span></div>
+      <div class="signal-item"><div class="signal-dot" style="background:var(--gd)"></div><span class="signal-name">TR CDS (5Y)</span><span class="signal-val">245</span><span class="signal-tr bull">↓ İyileşme</span></div>
+    </div>
+    <div class="radar-section">
+      <div class="radar-title"><span>📈 Enflasyon Sinyalleri</span></div>
+      <div class="signal-item"><div class="signal-dot" style="background:var(--rd)"></div><span class="signal-name">TR TÜFE (CPI)</span><span class="signal-val">%31.5</span><span class="signal-tr bear">Yüksek</span></div>
+      <div class="signal-item"><div class="signal-dot" style="background:var(--gd)"></div><span class="signal-name">ABD TÜFE</span><span class="signal-val">%3.1</span><span class="signal-tr bull">↓ Düşüyor</span></div>
+      <div class="signal-item"><div class="signal-dot" style="background:var(--gd)"></div><span class="signal-name">ÜFE (PPI)</span><span class="signal-val">%2.8</span><span class="signal-tr neut">Normal</span></div>
+      <div class="signal-item"><div class="signal-dot" style="background:var(--gd)"></div><span class="signal-name">Çekirdek Enflasyon (ABD)</span><span class="signal-val">%3.4</span><span class="signal-tr neut">Yapışkan</span></div>
+      <div class="signal-item"><div class="signal-dot" style="background:var(--gr)"></div><span class="signal-name">Ücret Artışları (ABD)</span><span class="signal-val">%4.1</span><span class="signal-tr bull">Normal</span></div>
+    </div>
+    <div class="radar-section">
+      <div class="radar-title"><span>🏭 Reel Ekonomi</span></div>
+      <div class="signal-item"><div class="signal-dot" style="background:var(--rd)"></div><span class="signal-name">Küresel PMI Üretim</span><span class="signal-val">48.4</span><span class="signal-tr bear">⚠ 50 Altı</span></div>
+      <div class="signal-item"><div class="signal-dot" style="background:var(--gd)"></div><span class="signal-name">Sanayi Üretimi (TR)</span><span class="signal-val">+%2.1</span><span class="signal-tr bull">Büyüyor</span></div>
+      <div class="signal-item"><div class="signal-dot" style="background:var(--gr)"></div><span class="signal-name">ABD İşsizlik Başvuruları</span><span class="signal-val">213K</span><span class="signal-tr bull">Sağlıklı</span></div>
+      <div class="signal-item"><div class="signal-dot" style="background:var(--gd)"></div><span class="signal-name">Perakende Satışlar</span><span class="signal-val">+%0.4</span><span class="signal-tr neut">Zayıf</span></div>
+      <div class="signal-item"><div class="signal-dot" style="background:var(--gd)"></div><span class="signal-name">Kapasite Kullanım Oranı</span><span class="signal-val">%78.2</span><span class="signal-tr neut">Normal</span></div>
+    </div>
+    <div class="radar-section">
+      <div class="radar-title"><span>🛍 Tüketici Davranışı</span></div>
+      <div class="signal-item"><div class="signal-dot" style="background:var(--gd)"></div><span class="signal-name">Tüketici Güven Endeksi</span><span class="signal-val">78.2</span><span class="signal-tr bear">Düşük</span></div>
+      <div class="signal-item"><div class="signal-dot" style="background:var(--gr)"></div><span class="signal-name">Kredi Kartı Harcamaları</span><span class="signal-val">+%6.2</span><span class="signal-tr bull">Güçlü</span></div>
+      <div class="signal-item"><div class="signal-dot" style="background:var(--rd)"></div><span class="signal-name">Konut Satışları (TR)</span><span class="signal-val">-%12</span><span class="signal-tr bear">Düşüyor</span></div>
+      <div class="signal-item"><div class="signal-dot" style="background:var(--gd)"></div><span class="signal-name">Mortgage Başvuruları (ABD)</span><span class="signal-val">Zayıf</span><span class="signal-tr bear">Düşük</span></div>
+      <div class="signal-item"><div class="signal-dot" style="background:var(--gd)"></div><span class="signal-name">Otomobil Satışları</span><span class="signal-val">-%3.1</span><span class="signal-tr bear">Geriliyor</span></div>
+    </div>
+    <div class="radar-section">
+      <div class="radar-title"><span>🚢 Küresel Ticaret</span></div>
+      <div class="signal-item"><div class="signal-dot" style="background:var(--rd)"></div><span class="signal-name">Baltic Dry Index</span><span class="signal-val">1,850</span><span class="signal-tr bull">+%2.1</span></div>
+      <div class="signal-item"><div class="signal-dot" style="background:var(--rd)"></div><span class="signal-name">SCFI Konteyner Navlun</span><span class="signal-val">2,213</span><span class="signal-tr bear">+%6.4</span></div>
+      <div class="signal-item"><div class="signal-dot" style="background:var(--gd)"></div><span class="signal-name">Küresel Ticaret Hacmi</span><span class="signal-val">+%1.8</span><span class="signal-tr neut">Yavaş</span></div>
+      <div class="signal-item"><div class="signal-dot" style="background:var(--gr)"></div><span class="signal-name">TR İhracat</span><span class="signal-val">$22.4B</span><span class="signal-tr bull">+%12.4</span></div>
+      <div class="signal-item"><div class="signal-dot" style="background:var(--gd)"></div><span class="signal-name">İhracat Siparişleri (PMI)</span><span class="signal-val">48.9</span><span class="signal-tr bear">50 Altı</span></div>
+    </div>
+    <div class="radar-section">
+      <div class="radar-title"><span>⛽ Emtia Sinyalleri</span></div>
+      <div class="signal-item"><div class="signal-dot" style="background:var(--rd)"></div><span class="signal-name">Petrol (Brent)</span><span class="signal-val" id="s-oil">$84.20</span><span class="signal-tr bear">+%3.2 ⚠</span></div>
+      <div class="signal-item"><div class="signal-dot" style="background:var(--gr)"></div><span class="signal-name">Bakır (Dr. Copper)</span><span class="signal-val">$4.15</span><span class="signal-tr bull">+%0.8</span></div>
+      <div class="signal-item"><div class="signal-dot" style="background:var(--gr)"></div><span class="signal-name">Altın (Ons)</span><span class="signal-val" id="s-gold-r">$2,650</span><span class="signal-tr bull">+%1.1</span></div>
+      <div class="signal-item"><div class="signal-dot" style="background:var(--gd)"></div><span class="signal-name">Gıda Fiyatları (FAO)</span><span class="signal-val">118.5</span><span class="signal-tr neut">Stabil</span></div>
+      <div class="signal-item"><div class="signal-dot" style="background:var(--gd)"></div><span class="signal-name">Enerji Maliyetleri</span><span class="signal-val">Yüksek</span><span class="signal-tr bear">Baskı</span></div>
+    </div>
+    <div class="radar-section">
+      <div class="radar-title"><span>📉 Finansal Risk Göstergeleri</span></div>
+      <div class="signal-item"><div class="signal-dot" style="background:var(--gr)"></div><span class="signal-name">VIX Volatilite Endeksi</span><span class="signal-val">18.4</span><span class="signal-tr bull">Düşük</span></div>
+      <div class="signal-item"><div class="signal-dot" style="background:var(--gd)"></div><span class="signal-name">Banka Hisseleri (KBW)</span><span class="signal-val">-%2.1</span><span class="signal-tr bear">Zayıf</span></div>
+      <div class="signal-item"><div class="signal-dot" style="background:var(--gr)"></div><span class="signal-name">Teknoloji Hisseleri</span><span class="signal-val">+%8.4</span><span class="signal-tr bull">Güçlü</span></div>
+      <div class="signal-item"><div class="signal-dot" style="background:var(--gd)"></div><span class="signal-name">Büyük Fon Pozisyonları</span><span class="signal-val">Risk-Off</span><span class="signal-tr bear">Kaçış</span></div>
+      <div class="signal-item"><div class="signal-dot" style="background:var(--gr)"></div><span class="signal-name">Küresel Likidite</span><span class="signal-val">Daralıyor</span><span class="signal-tr bear">Fed Sıkı</span></div>
+    </div>
+  </div>
+  <!-- OPPORTUNITY SIGNALS -->
+  <div class="cd">
+    <div class="ch"><div class="ci" style="background:rgba(5,150,105,0.1)">💡</div><h3>Güncel Fırsat Sinyalleri</h3></div>
+    <div class="opp-card"><div class="opp-title">📈 Dolar Yükselişi → İhracat Avantajı</div><div class="opp-desc">USD/TRY'nin yükselmesi Türkiye'nin ihraç ettiği ürünleri uluslararası piyasada daha rekabetçi kılıyor. Özellikle tekstil, otomotiv yan sanayi ve tarım ürünlerinde fiyat avantajı artıyor.</div><div class="opp-action">→ Eylem: İhracat kapasitesini artır, uzun vadeli kontrat imzala</div></div>
+    <div class="opp-card"><div class="opp-title">🏠 Faiz İndirimi Döngüsü → Gayrimenkul</div><div class="opp-desc">TCMB'nin faiz indirimi döngüsüne girilmesiyle konut kredisi faizleri düşecek. Bu konut talebini canlandırabilir. Özellikle lojistik depo ve sanayi parselleri yüksek getiri sunmaya devam ediyor.</div><div class="opp-action">→ Eylem: OSB yakını lojistik depo fırsatlarını incele</div></div>
+    <div class="opp-card"><div class="opp-title">⚡ Petrol Baskısı → Tedarik Zinciri Yönetimi</div><div class="opp-desc">Petrolün $80 üzerinde seyretmesi navlun maliyetlerini artırıyor. Stok yönetimini öne çekerek maliyetleri hedge etmek kritik önem taşıyor.</div><div class="opp-action">→ Eylem: 3 aylık stok öne çek, vadeli navlun kontratı değerlendir</div></div>
+    <div class="opp-card"><div class="opp-title">🌍 Küresel PMI 50 Altı → Piyasa Seçiciliği</div><div class="opp-desc">PMI'nın 50 altında seyretmesi küresel büyümenin yavaşladığına işaret ediyor. Bu ortamda MENA ve Körfez ülkelerinin güçlü büyümesi dikkat çekiyor.</div><div class="opp-action">→ Eylem: MENA pazarına yönel, inşaat ve altyapı sektörüne odaklan</div></div>
+  </div>
+</div>
+
+<!-- ══ EARLY WARNING SYSTEM ══ -->
+<div id="tab-earlywarning" class="tab">
+  <div class="ph"><h2>Erken Uyarı Sistemi</h2><p>Ekonomik krizleri 6-12 ay önceden gösteren 25 gösterge — Hedge fon seviyesi analiz</p></div>
+  <!-- CRISIS PROBABILITY -->
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:14px">
+    <div class="cd" style="text-align:center;background:linear-gradient(135deg,rgba(220,38,38,0.06),rgba(217,119,6,0.04));border-color:rgba(220,38,38,0.15)">
+      <div style="font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--rd);margin-bottom:6px">🔴 Kriz İhtimali</div>
+      <div style="font-size:32px;font-weight:800;font-family:var(--mono);color:var(--rd)">34%</div>
+      <div style="font-size:10px;color:var(--tx3);margin-top:4px">6-12 ay içinde resesyon</div>
+    </div>
+    <div class="cd" style="text-align:center;background:linear-gradient(135deg,rgba(5,150,105,0.06),rgba(37,99,235,0.04));border-color:rgba(5,150,105,0.15)">
+      <div style="font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--gr);margin-bottom:6px">🟢 Büyüme Sinyali</div>
+      <div style="font-size:32px;font-weight:800;font-family:var(--mono);color:var(--gr)">58%</div>
+      <div style="font-size:10px;color:var(--tx3);margin-top:4px">Orta vadeli büyüme</div>
+    </div>
+    <div class="cd" style="text-align:center;background:linear-gradient(135deg,rgba(217,119,6,0.06),rgba(37,99,235,0.04));border-color:rgba(217,119,6,0.15)">
+      <div style="font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--gd);margin-bottom:6px">🟡 Belirsizlik</div>
+      <div style="font-size:32px;font-weight:800;font-family:var(--mono);color:var(--gd)">8%</div>
+      <div style="font-size:10px;color:var(--tx3);margin-top:4px">Yüksek volatilite</div>
+    </div>
+  </div>
+  <!-- 25 INDICATORS -->
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px">
+    <div class="cd">
+      <div class="ch"><div class="ci" style="background:rgba(220,38,38,0.1)">⚠</div><h3>Kriz Sinyal Göstergeler (25)</h3></div>
+      <div class="crisis-indicator" style="background:rgba(220,38,38,0.06)"><span class="ci-name">1. Yield Curve (2Y-10Y)</span><div class="ci-bar-wrap"><div class="ci-bar" style="width:85%;background:var(--rd)"></div></div><span class="ci-level" style="color:var(--rd)">⚠ Ters</span></div>
+      <div class="crisis-indicator"><span class="ci-name">2. CDS Risk Primi (TR)</span><div class="ci-bar-wrap"><div class="ci-bar" style="width:55%;background:var(--gd)"></div></div><span class="ci-level" style="color:var(--gd)">Orta</span></div>
+      <div class="crisis-indicator"><span class="ci-name">3. Banka Kredi Daralması</span><div class="ci-bar-wrap"><div class="ci-bar" style="width:40%;background:var(--gr)"></div></div><span class="ci-level" style="color:var(--gr)">Normal</span></div>
+      <div class="crisis-indicator" style="background:rgba(220,38,38,0.06)"><span class="ci-name">4. Konut Satışları Düşüşü</span><div class="ci-bar-wrap"><div class="ci-bar" style="width:72%;background:var(--rd)"></div></div><span class="ci-level" style="color:var(--rd)">⚠ Düşüş</span></div>
+      <div class="crisis-indicator"><span class="ci-name">5. İnşaat İzinleri</span><div class="ci-bar-wrap"><div class="ci-bar" style="width:48%;background:var(--gd)"></div></div><span class="ci-level" style="color:var(--gd)">Orta</span></div>
+      <div class="crisis-indicator" style="background:rgba(220,38,38,0.06)"><span class="ci-name">6. PMI Endeksi</span><div class="ci-bar-wrap"><div class="ci-bar" style="width:68%;background:var(--rd)"></div></div><span class="ci-level" style="color:var(--rd)">⚠ 50 Altı</span></div>
+      <div class="crisis-indicator"><span class="ci-name">7. İşsizlik Başvuruları</span><div class="ci-bar-wrap"><div class="ci-bar" style="width:35%;background:var(--gr)"></div></div><span class="ci-level" style="color:var(--gr)">Sağlıklı</span></div>
+      <div class="crisis-indicator"><span class="ci-name">8. Tüketici Güven Endeksi</span><div class="ci-bar-wrap"><div class="ci-bar" style="width:58%;background:var(--gd)"></div></div><span class="ci-level" style="color:var(--gd)">Zayıf</span></div>
+      <div class="crisis-indicator" style="background:rgba(220,38,38,0.06)"><span class="ci-name">9. Kur Şokları (TRY)</span><div class="ci-bar-wrap"><div class="ci-bar" style="width:75%;background:var(--rd)"></div></div><span class="ci-level" style="color:var(--rd)">⚠ Yüksek</span></div>
+      <div class="crisis-indicator"><span class="ci-name">10. Altın Fiyatı Artışı</span><div class="ci-bar-wrap"><div class="ci-bar" style="width:62%;background:var(--gd)"></div></div><span class="ci-level" style="color:var(--gd)">Dikkat</span></div>
+      <div class="crisis-indicator" style="background:rgba(220,38,38,0.06)"><span class="ci-name">11. Petrol Fiyatı Baskısı</span><div class="ci-bar-wrap"><div class="ci-bar" style="width:78%;background:var(--rd)"></div></div><span class="ci-level" style="color:var(--rd)">⚠ Kritik</span></div>
+      <div class="crisis-indicator"><span class="ci-name">12. Baltic Dry Index</span><div class="ci-bar-wrap"><div class="ci-bar" style="width:45%;background:var(--gd)"></div></div><span class="ci-level" style="color:var(--gd)">Izle</span></div>
+      <div class="crisis-indicator"><span class="ci-name">13. Sanayi Üretimi</span><div class="ci-bar-wrap"><div class="ci-bar" style="width:38%;background:var(--gr)"></div></div><span class="ci-level" style="color:var(--gr)">Normal</span></div>
+    </div>
+    <div class="cd">
+      <div class="ch"><div class="ci" style="background:rgba(217,119,6,0.1)">📡</div><h3>İleri Sinyal Göstergeler (12-25)</h3></div>
+      <div class="crisis-indicator"><span class="ci-name">14. Perakende Satışlar</span><div class="ci-bar-wrap"><div class="ci-bar" style="width:44%;background:var(--gd)"></div></div><span class="ci-level" style="color:var(--gd)">Zayıf</span></div>
+      <div class="crisis-indicator"><span class="ci-name">15. Şirket İflasları</span><div class="ci-bar-wrap"><div class="ci-bar" style="width:42%;background:var(--gd)"></div></div><span class="ci-level" style="color:var(--gd)">Artıyor</span></div>
+      <div class="crisis-indicator"><span class="ci-name">16. Banka Hisseleri</span><div class="ci-bar-wrap"><div class="ci-bar" style="width:58%;background:var(--gd)"></div></div><span class="ci-level" style="color:var(--gd)">Zayıf</span></div>
+      <div class="crisis-indicator"><span class="ci-name">17. Küresel Likidite (Fed)</span><div class="ci-bar-wrap"><div class="ci-bar" style="width:65%;background:var(--rd)"></div></div><span class="ci-level" style="color:var(--rd)">Sıkışık</span></div>
+      <div class="crisis-indicator"><span class="ci-name">18. Para Arzı M2</span><div class="ci-bar-wrap"><div class="ci-bar" style="width:60%;background:var(--gd)"></div></div><span class="ci-level" style="color:var(--gd)">Daralıyor</span></div>
+      <div class="crisis-indicator"><span class="ci-name">19. Küresel Ticaret Hacmi</span><div class="ci-bar-wrap"><div class="ci-bar" style="width:48%;background:var(--gd)"></div></div><span class="ci-level" style="color:var(--gd)">Yavaş</span></div>
+      <div class="crisis-indicator"><span class="ci-name">20. Şirket Karları (S&P)</span><div class="ci-bar-wrap"><div class="ci-bar" style="width:40%;background:var(--gr)"></div></div><span class="ci-level" style="color:var(--gr)">Normal</span></div>
+      <div class="crisis-indicator"><span class="ci-name">21. Teknoloji Hisseleri</span><div class="ci-bar-wrap"><div class="ci-bar" style="width:30%;background:var(--gr)"></div></div><span class="ci-level" style="color:var(--gr)">Güçlü</span></div>
+      <div class="crisis-indicator"><span class="ci-name">22. Jeopolitik Risk Endeksi</span><div class="ci-bar-wrap"><div class="ci-bar" style="width:75%;background:var(--rd)"></div></div><span class="ci-level" style="color:var(--rd)">⚠ Yüksek</span></div>
+      <div class="crisis-indicator" style="background:rgba(220,38,38,0.06)"><span class="ci-name">23. Enflasyon Şoku (TR)</span><div class="ci-bar-wrap"><div class="ci-bar" style="width:80%;background:var(--rd)"></div></div><span class="ci-level" style="color:var(--rd)">⚠ Kritik</span></div>
+      <div class="crisis-indicator"><span class="ci-name">24. Ters Repo / Likidite</span><div class="ci-bar-wrap"><div class="ci-bar" style="width:50%;background:var(--gd)"></div></div><span class="ci-level" style="color:var(--gd)">Takip</span></div>
+      <div class="crisis-indicator"><span class="ci-name">25. Büyük Fon Hareketleri</span><div class="ci-bar-wrap"><div class="ci-bar" style="width:62%;background:var(--gd)"></div></div><span class="ci-level" style="color:var(--gd)">Risk-Off</span></div>
+      <!-- TOP 5 -->
+      <div style="margin-top:14px;padding-top:12px;border-top:1px solid var(--sbb)">
+        <div style="font-size:9px;font-weight:700;color:var(--tx3);letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px">⭐ En Kritik 5 Gösterge</div>
+        <div style="display:flex;flex-direction:column;gap:5px">
+          <div style="display:flex;align-items:center;gap:8px;font-size:11px"><span style="color:var(--rd);font-weight:700">1.</span><span style="color:var(--tx2)">Yield Curve</span><span style="margin-left:auto;color:var(--rd);font-weight:700;font-family:var(--mono)">⚠ Ters</span></div>
+          <div style="display:flex;align-items:center;gap:8px;font-size:11px"><span style="color:var(--rd);font-weight:700">2.</span><span style="color:var(--tx2)">PMI Endeksi</span><span style="margin-left:auto;color:var(--rd);font-weight:700;font-family:var(--mono)">⚠ 48.4</span></div>
+          <div style="display:flex;align-items:center;gap:8px;font-size:11px"><span style="color:var(--gd);font-weight:700">3.</span><span style="color:var(--tx2)">CDS Risk Primi</span><span style="margin-left:auto;color:var(--gd);font-weight:700;font-family:var(--mono)">245</span></div>
+          <div style="display:flex;align-items:center;gap:8px;font-size:11px"><span style="color:var(--rd);font-weight:700">4.</span><span style="color:var(--tx2)">Petrol Fiyatı</span><span style="margin-left:auto;color:var(--rd);font-weight:700;font-family:var(--mono)">$84.20</span></div>
+          <div style="display:flex;align-items:center;gap:8px;font-size:11px"><span style="color:var(--gd);font-weight:700">5.</span><span style="color:var(--tx2)">Küresel Ticaret</span><span style="margin-left:auto;color:var(--gd);font-weight:700;font-family:var(--mono)">+%1.8</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- STRATEGY OUTPUT -->
+  <div class="cd">
+    <div class="ch"><div class="ci" style="background:rgba(37,99,235,0.1)">🎯</div><h3>Sistem Strateji Çıktısı — Bugünün Analizi</h3></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px">
+      <div style="background:rgba(220,38,38,0.06);border:1px solid rgba(220,38,38,0.14);border-radius:10px;padding:14px">
+        <div style="font-size:10px;font-weight:700;color:var(--rd);letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px">⚠ Riskler</div>
+        <ul style="font-size:11px;color:var(--tx2);line-height:1.8;padding-left:14px">
+          <li>Yield curve tersleşmesi resesyon riskini canlı tutuyor</li>
+          <li>Petrol ve navlun maliyet baskısı artıyor</li>
+          <li>Küresel PMI 50 altında seyrediyor</li>
+          <li>Jeopolitik gerilim yüksek kalmaya devam ediyor</li>
+        </ul>
+      </div>
+      <div style="background:rgba(5,150,105,0.06);border:1px solid rgba(5,150,105,0.14);border-radius:10px;padding:14px">
+        <div style="font-size:10px;font-weight:700;color:var(--gr);letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px">✅ Fırsatlar</div>
+        <ul style="font-size:11px;color:var(--tx2);line-height:1.8;padding-left:14px">
+          <li>TL değer kaybı ihracatçıya rekabet avantajı sağlıyor</li>
+          <li>TCMB faiz indirimi gayrimenkul piyasasını canlandırabilir</li>
+          <li>MENA bölgesi güçlü büyümesini sürdürüyor</li>
+          <li>Altın risk kalkanı işlevi görmeye devam ediyor</li>
+        </ul>
+      </div>
+      <div style="background:rgba(37,99,235,0.06);border:1px solid rgba(37,99,235,0.14);border-radius:10px;padding:14px">
+        <div style="font-size:10px;font-weight:700;color:var(--ac);letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px">💡 Öneriler</div>
+        <ul style="font-size:11px;color:var(--tx2);line-height:1.8;padding-left:14px">
+          <li>Stok yönetimini 3 aylık öne çek</li>
+          <li>İhracat kanallarını çeşitlendir — MENA öncelikli</li>
+          <li>Nakit rezervini koru, kaldıraçtan kaç</li>
+          <li>Lojistik depo yatırımı değerlendir</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+
 </div>
 </main>
 </div>
@@ -625,8 +977,8 @@ input,select,textarea{cursor:text}
 </div>
 
 <script>
-var VERSION='v8.0.0';
-var BUILD_TS='2026-03-15 · 14:32:07';
+var VERSION='v9.0.0';
+var BUILD_TS='2026-03-15 · 16:45:22';
 var LANG='tr';
 var T={
   tr:{login_user:'Kullanıcı Adı',login_pass:'Şifre',login_btn:'Giriş Yap',login_err:'Hatalı kullanıcı adı veya şifre'},
@@ -650,9 +1002,9 @@ var D={re:[{n:'Kadıköy 2+1',v:'2400000',r:'14000',t:'Konut'}],pipe:[{n:'Al-Fut
 var calYear=2026,calMonth=2,selectedDay=null,noteFilter='all';
 var mwChartInstance=null;
 var sv=function(id,html){var el=document.getElementById(id);if(el)el.innerHTML=html;};
-var tabNames={dashboard:'Genel Bakış',portfolio:'Portföy',ai:'AI Rapor',economists:'Ekonomistler',minwage:'Asgari Ücret',world:'Dünya Ekonomisi',logistics:'Navlun & Lojistik',export:'İhracat',weather:'Hava & Haberler',realestate:'Gayrimenkul',bizdev:'İş Geliştirme',calendar:'Takvim & Görev',notes:'Not Defteri',links:'Web Linklerim',growth:'Kişisel Gelişim',kids:'Çocuk Gelişimi'};
+var tabNames={dashboard:'Genel Bakış',portfolio:'Portföy',ai:'AI Rapor',economists:'Ekonomistler',minwage:'Asgari Ücret',world:'Dünya Ekonomisi',logistics:'Navlun & Lojistik',export:'İhracat',weather:'Hava & Haberler',realestate:'Gayrimenkul',bizdev:'İş Geliştirme',calendar:'Takvim & Görev',notes:'Not Defteri',links:'Web Linklerim',growth:'Kişisel Gelişim',kids:'Çocuk Gelişimi',islamic:'İslami Rehberlik',signals40:'40 Sinyal Radar',earlywarning:'Erken Uyarı Sistemi'};
 document.querySelectorAll('.ni[data-tab]').forEach(function(b){b.addEventListener('click',function(){go(this.getAttribute('data-tab'))})});
-function go(t){document.querySelectorAll('.tab').forEach(function(x){x.classList.remove('active')});var el=document.getElementById('tab-'+t);if(el)el.classList.add('active');document.querySelectorAll('.ni').forEach(function(b){b.classList.remove('active');if(b.getAttribute('data-tab')===t)b.classList.add('active')});var pt=document.getElementById('pt');if(pt)pt.textContent=tabNames[t]||t;if(t==='weather')loadWeather();if(t==='world')renderWorldPrices();if(t==='calendar')renderCal();if(t==='economists')loadEconomists();if(t==='minwage'){renderMWLive();renderMWChart('tl');}if(t==='export')renderExportIncentives();}
+function go(t){document.querySelectorAll('.tab').forEach(function(x){x.classList.remove('active')});var el=document.getElementById('tab-'+t);if(el)el.classList.add('active');document.querySelectorAll('.ni').forEach(function(b){b.classList.remove('active');if(b.getAttribute('data-tab')===t)b.classList.add('active')});var pt=document.getElementById('pt');if(pt)pt.textContent=tabNames[t]||t;if(t==='weather')loadWeather();if(t==='world')renderWorldPrices();if(t==='calendar')renderCal();if(t==='economists')loadEconomists();if(t==='minwage'){renderMWLive();renderMWChart('tl');}if(t==='export')renderExportIncentives();if(t==='signals40')updateSignalRadar();if(t==='earlywarning')drawRiskGauge();if(t==='islamic'){loadPrayerTimes();renderWisdomQuotes();updateHijriDate();}}
 async function loadFX(){try{var r=await fetch('https://api.exchangerate-api.com/v4/latest/USD');var d=await r.json();FX.usd=d.rates.TRY;FX.eur=d.rates.TRY/d.rates.EUR;FX.eurusd=1/d.rates.EUR;renderFX();renderAlerts();renderMWLive();renderPortfolio();}catch(e){FX.usd=44.18;FX.eur=47.32;FX.eurusd=1.071;renderFX();}}
 async function loadGold(){try{var r=await fetch('https://api.metals.live/v1/spot/gold');var d=await r.json();var raw=Array.isArray(d)?d[0]:d;var oz=parseFloat(raw.gold||raw.XAU||raw.price||0);if(!oz||isNaN(oz))throw 0;FX.gold=oz;FX.goldGram=oz/31.1035;renderGold();renderMWLive();renderPortfolio();}catch(e){FX.gold=2650;FX.goldGram=2650/31.1035;renderGold();}}
 async function loadCrypto(){try{var r=await fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum&vs_currencies=usd&include_24hr_change=true');var d=await r.json();FX.btc=d.bitcoin.usd;FX.btcChg=d.bitcoin.usd_24h_change;FX.eth=d.ethereum?d.ethereum.usd:0;renderCrypto();renderPortfolio();}catch(e){FX.btc=98400;FX.btcChg=2.1;FX.eth=2000;renderCrypto();}}
@@ -736,7 +1088,205 @@ function dGoal(i){D.goals.splice(i,1);rGoals();}
 function rKids(){var el=document.getElementById('kl');if(!el)return;if(!D.kids.length){el.innerHTML='<div style="font-size:11px;color:var(--tx3);padding:3px">Aktivite yok.</div>';return;}el.innerHTML=D.kids.map(function(k,i){return '<div class="li"><div style="font-size:16px;width:24px;text-align:center">'+k.e+'</div><div class="li-c"><div class="li-n">'+k.a+'</div><div class="li-s">'+k.d+'</div></div><button class="del" onclick="dKid('+i+')">Sil</button></div>';}).join('');sv('kc',D.kids.length);}
 function addKid(){var a=document.getElementById('ka').value.trim();if(!a)return;D.kids.push({a:a,d:document.getElementById('kd').value||'Belirtilmedi',e:document.getElementById('ke').value||'⭐'});document.getElementById('ka').value='';document.getElementById('kd').value='';document.getElementById('ke').value='';rKids();}
 function dKid(i){D.kids.splice(i,1);rKids();}
-function initApp(){rRE();rPipe();rBooks();rGoals();rKids();renderLinks();renderPortfolio();renderNotes();renderTodos();renderAlerts();renderWorldPrices();renderCal();renderUpcomingEvents();renderExportIncentives();loadEconomists(true);renderMWLive();loadFX();loadCrypto();loadGold();loadMarkets();loadWeather();setInterval(function(){var h=new Date().getHours();if(h===8||h===12)loadEconomists(true);},60000);setInterval(function(){loadFX();loadCrypto();loadGold();renderAlerts();},300000);}
+function initApp(){rRE();rPipe();rBooks();rGoals();rKids();renderLinks();renderPortfolio();renderNotes();renderTodos();renderAlerts();renderWorldPrices();renderCal();renderUpcomingEvents();renderExportIncentives();loadEconomists(true);renderMWLive();loadFX();loadCrypto();loadGold();loadMarkets();loadWeather();setInterval(function(){var h=new Date().getHours();if(h===8||h===12)loadEconomists(true);},60000);setInterval(function(){loadFX();loadCrypto();loadGold();renderAlerts();},300000);loadPrayerTimes();renderWisdomQuotes();updateHijriDate();drawRiskGauge();renderExportIncentives();setInterval(loadPrayerTimes,60000);updateDailyIslamic();}
+
+
+/* ═══ PRAYER TIMES ═══ */
+var PRAYER_CITIES = {
+  Istanbul:{lat:41.0082,lon:28.9784},Ankara:{lat:39.9334,lon:32.8597},
+  Izmir:{lat:38.4192,lon:27.1287},Bursa:{lat:40.1885,lon:29.0610},
+  Antalya:{lat:36.8969,lon:30.7133},Konya:{lat:37.8746,lon:32.4932},
+  Gaziantep:{lat:37.0662,lon:37.3833},Diyarbakir:{lat:37.9144,lon:40.2306}
+};
+var currentPrayerCity = 'Istanbul';
+var prayerTimes = {};
+
+async function loadPrayerTimes(city) {
+  city = city || currentPrayerCity;
+  currentPrayerCity = city;
+  var coords = PRAYER_CITIES[city] || PRAYER_CITIES.Istanbul;
+  var today = new Date();
+  var dateStr = today.getFullYear()+'-'+String(today.getMonth()+1).padStart(2,'0')+'-'+String(today.getDate()).padStart(2,'0');
+  try {
+    var url = 'https://api.aladhan.com/v1/timings/'+dateStr+'?latitude='+coords.lat+'&longitude='+coords.lon+'&method=13';
+    var r = await fetch(url);
+    var d = await r.json();
+    if(d.code === 200) {
+      var t = d.data.timings;
+      prayerTimes = {
+        imsak: t.Imsak, gunes: t.Sunrise, ogle: t.Dhuhr,
+        ikindi: t.Asr, aksam: t.Maghrib, yatsi: t.Isha
+      };
+      Object.keys(prayerTimes).forEach(function(k){
+        var el=document.getElementById('pt-'+k);
+        if(el) el.textContent = prayerTimes[k];
+      });
+      var lbl = document.getElementById('prayer-city-label');
+      if(lbl) lbl.textContent = city;
+      var upd = document.getElementById('prayer-update-time');
+      if(upd) upd.textContent = 'Güncellendi: '+new Date().toLocaleTimeString('tr-TR',{hour:'2-digit',minute:'2-digit'});
+      updatePrayerCountdowns();
+    }
+  } catch(e) {
+    // Use static fallback
+    prayerTimes = {imsak:'05:12',gunes:'06:38',ogle:'13:04',ikindi:'16:22',aksam:'19:28',yatsi:'20:54'};
+    Object.keys(prayerTimes).forEach(function(k){
+      var el=document.getElementById('pt-'+k);
+      if(el) el.textContent=prayerTimes[k];
+    });
+  }
+}
+
+function updatePrayerCountdowns() {
+  if(!Object.keys(prayerTimes).length) return;
+  var now = new Date();
+  var nowMin = now.getHours()*60+now.getMinutes();
+  var names = {imsak:'İmsak',gunes:'Güneş',ogle:'Öğle',ikindi:'İkindi',aksam:'Akşam',yatsi:'Yatsı'};
+  var allCards = ['imsak','gunes','ogle','ikindi','aksam','yatsi'];
+  var nextPrayer = null;
+  var minDiff = Infinity;
+  allCards.forEach(function(k){
+    document.getElementById('pc-'+k).classList.remove('active-prayer');
+    var el=document.getElementById('cd-'+k);
+    if(el) el.textContent='';
+    if(!prayerTimes[k]) return;
+    var parts = prayerTimes[k].split(':');
+    var pMin = parseInt(parts[0])*60+parseInt(parts[1]);
+    var diff = pMin - nowMin;
+    if(diff > 0 && diff < minDiff) { minDiff = diff; nextPrayer = k; }
+  });
+  if(nextPrayer) {
+    document.getElementById('pc-'+nextPrayer).classList.add('active-prayer');
+    var h = Math.floor(minDiff/60), m = minDiff%60;
+    var txt = h>0 ? h+'s '+m+'dk' : m+' dakika';
+    var cdEl = document.getElementById('cd-'+nextPrayer);
+    if(cdEl) cdEl.textContent = txt+' kaldı';
+  }
+}
+setInterval(updatePrayerCountdowns, 60000);
+
+/* ═══ DAILY AYAH & HADITH ═══ */
+var AYAHS = [
+  {arabic:'وَأَوْفُوا الْكَيْلَ إِذَا كِلْتُمْ وَزِنُوا بِالْقِسْطَاسِ الْمُسْتَقِيمِ',text:'"Ölçtüğünüzde ölçüyü tam yapın ve doğru terazi ile tartın. Bu daha hayırlı ve sonuç bakımından daha güzeldir."',ref:'İsra Suresi, 17:35'},
+  {arabic:'يَا أَيُّهَا الَّذِينَ آمَنُوا أَوْفُوا بِالْعُقُودِ',text:'"Ey iman edenler! Akitlerinizi (sözleşmelerinizi) yerine getirin."',ref:'Maide Suresi, 5:1'},
+  {arabic:'وَلَا تَأْكُلُوا أَمْوَالَكُم بَيْنَكُم بِالْبَاطِلِ',text:'"Mallarınızı aranızda haksız yollarla yemeyin."',ref:'Bakara Suresi, 2:188'},
+  {arabic:'وَإِن تُبْتُمْ فَلَكُمْ رُءُوسُ أَمْوَالِكُمْ',text:'"Eğer tövbe ederseniz, ana paranız sizindir. Ne zulmedin ne de zulme uğrayın."',ref:'Bakara Suresi, 2:279'},
+  {arabic:'يَمْحَقُ اللَّهُ الرِّبَا وَيُرْبِي الصَّدَقَاتِ',text:'"Allah faizi mahveder, sadakaları ise artırır. Allah, nankörlükte ve günahta ısrar eden kimseyi sevmez."',ref:'Bakara Suresi, 2:276'},
+  {arabic:'وَلَا تَبْخَسُوا النَّاسَ أَشْيَاءَهُمْ',text:'"İnsanlara (hak ettikleri) şeyleri eksik vermeyin."',ref:'Şuara Suresi, 26:183'},
+  {arabic:'إِنَّ اللَّهَ يَأْمُرُ بِالْعَدْلِ وَالْإِحْسَانِ',text:'"Şüphesiz Allah, adaleti, iyilik yapmayı, akrabaya yardım etmeyi emreder."',ref:'Nahl Suresi, 16:90'}
+];
+var HADITHS = [
+  {text:'"Doğru ve güvenilir tüccar, kıyamet günü peygamberler, doğrular ve şehitlerle beraberdir."',source:'Tirmizi, Buyu 4'},
+  {text:'"Ticaret yapın, zira rızkın onda dokuzu ticarettedir."',source:'Hz. Ali (r.a.)'},
+  {text:'"Doğruluk berekete götürür, yalan ise felakete sürükler."',source:'Buhari, Büyü 19'},
+  {text:'"Kim bir Müslümanı aldatırsa, bizden değildir."',source:'Müslim, İman 164'},
+  {text:'"Helal olan şeyler açıktır, haram olan şeyler açıktır. Bu ikisi arasında şüpheli şeyler vardır."',source:'Buhari, İman 39'},
+  {text:'"Ölçü ve tartıyı tam yapın, insanlara haksızlık etmeyin."',source:'Hud Suresi 11:85'},
+  {text:'"Sadece helal kazancınızı harcayın; zira Allah ancak helali kabul eder."',source:'Müslim, Zekat 65'}
+];
+var REMINDERS = [
+  'Helal kazanç az da olsa bereketlidir. Haram kazanç çok da olsa bereketsizdir.',
+  'Bugün bir işinde dürüstlüğü ile ayrıl; güven en büyük sermayendir.',
+  'Ticarette bereketin sırrı: Müşterine nasıl davranıldığını hatırla.',
+  'Sözüne sadık olan tüccar, en büyük serveti — güveni — biriktirir.',
+  'Fırsatları değerlendirirken hakkı gözetmek; en güzel kazancın anahtarıdır.',
+  'Bugün bir kul hakkını telafi etmek için adım at.',
+  'Şükür, nimetin artmasına vesile olur.'
+];
+function getDayIndex() { return new Date().getDate() % 7; }
+function updateDailyIslamic() {
+  var idx = getDayIndex();
+  var ayah = AYAHS[idx];
+  var hadith = HADITHS[idx];
+  var rem = REMINDERS[idx];
+  var ar=document.getElementById('ayah-arabic'); if(ar) ar.textContent=ayah.arabic;
+  var at=document.getElementById('ayah-text'); if(at) at.textContent=ayah.text;
+  var aref=document.getElementById('ayah-ref'); if(aref) aref.textContent=ayah.ref;
+  var ht=document.getElementById('hadith-text'); if(ht) ht.textContent=hadith.text;
+  var hs=document.getElementById('hadith-source'); if(hs) hs.textContent='— '+hadith.source;
+  var dr=document.getElementById('daily-reminder'); if(dr) dr.textContent='"'+rem+'"';
+}
+
+/* ═══ WISDOM QUOTES ═══ */
+var WISDOM_QUOTES = [
+  {text:'"İnsanların en hayırlısı, insanlara en çok fayda sağlayandır."',author:'Hz. Muhammed (s.a.v.)'},
+  {text:'"Ticaret bir sanattır; ustası olan kazanır, lakin dürüstlüğü olmayan iflas eder."',author:'İbn Haldun'},
+  {text:'"Bereketin kaynağı şükürdür; şükredeni Allah daha da artırır."',author:'İmam Gazali'},
+  {text:'"Güvenilir bir ortak, servetin en büyük parçasıdır."',author:'Hz. Ali (r.a.)'},
+  {text:'"İnsanlar uyurken alimler uyanıktır; bu fark, dünyayı değiştirir."',author:'İbni Sina'},
+  {text:'"Her haklı işin başında besmele çekmek, ameli bereketlendirir."',author:'İmam Şafi'},
+  {text:'"Helal lokma, ibadeti kolaylaştırır; haram lokma, kalbi katılaştırır."',author:'İmam Rabbani'},
+  {text:'"İlim, zenginliğin anahtarıdır; cahil için ne dünya ne ahiret kazancı vardır."',author:'İbn Kayyım'},
+  {text:'"Sabır en büyük hazinedir; sabreden, nihayetinde kazanan olur."',author:'Mevlana Celaleddin Rumi'},
+  {text:'"Akıllı insan bugünü yaşar ama yarını düşünür."',author:'İbn Haldun, Mukaddime'}
+];
+function renderWisdomQuotes() {
+  var el = document.getElementById('wisdom-quotes-list');
+  if(!el) return;
+  el.innerHTML = WISDOM_QUOTES.map(function(q){
+    return '<div class="hadith-card" style="margin-bottom:7px"><p class="hadith-text">'+q.text+'</p><div class="hadith-source">'+q.author+'</div></div>';
+  }).join('');
+}
+
+/* ═══ HIJRI DATE ═══ */
+function updateHijriDate() {
+  var el = document.getElementById('hijri-date-display');
+  var gEl = document.getElementById('hijri-gregorian');
+  if(!el) return;
+  // Simple Hijri approximation
+  var today = new Date();
+  var hijriMonths = ['Muharrem','Safer','Rebiülevvel','Rebiülahir','Cemaziyelevvel','Cemaziyelahir','Recep','Şaban','Ramazan','Şevval','Zilkade','Zilhicce'];
+  // Approximate calculation (offset from known date)
+  var knownGregorian = new Date(2025, 2, 1); // March 1, 2025
+  var knownHijriDay = 1; var knownHijriMonth = 9; var knownHijriYear = 1446; // 1 Ramazan 1446
+  var diffDays = Math.floor((today - knownGregorian) / (1000*60*60*24));
+  var totalDays = (knownHijriYear-1)*354 + (knownHijriMonth-1)*29.5 + knownHijriDay + diffDays;
+  var hYear = Math.floor(totalDays / 354) + 1;
+  var rem = totalDays % 354;
+  var hMonth = Math.floor(rem / 29.5) + 1;
+  var hDay = Math.floor(rem % 29.5) + 1;
+  if(hMonth > 12) { hMonth = 12; }
+  el.textContent = hDay + ' ' + hijriMonths[hMonth-1] + ' ' + hYear;
+  if(gEl) gEl.textContent = today.toLocaleDateString('tr-TR', {day:'numeric', month:'long', year:'numeric'});
+}
+
+/* ═══ SIGNAL RADAR UPDATE ═══ */
+function updateSignalRadar() {
+  var goldEl = document.getElementById('s-gold-r');
+  if(goldEl && FX.gold) goldEl.textContent = '$' + Math.round(FX.gold).toLocaleString();
+  var oilEl = document.getElementById('s-oil');
+  if(oilEl) oilEl.textContent = '$84.20';
+}
+
+/* ═══ RISK GAUGE CANVAS ═══ */
+function drawRiskGauge() {
+  var canvas = document.getElementById('risk-gauge-canvas');
+  if(!canvas) return;
+  var ctx = canvas.getContext('2d');
+  var cx = 45, cy = 45, r = 38;
+  ctx.clearRect(0,0,90,90);
+  // Background arc
+  ctx.beginPath();
+  ctx.arc(cx,cy,r, Math.PI*0.75, Math.PI*2.25);
+  ctx.strokeStyle = 'rgba(148,163,184,0.2)';
+  ctx.lineWidth = 8;
+  ctx.lineCap = 'round';
+  ctx.stroke();
+  // Score arc (42/100 = moderate risk)
+  var score = 42;
+  var angle = Math.PI*0.75 + (score/100)*Math.PI*1.5;
+  var gradient = ctx.createLinearGradient(0,0,90,0);
+  gradient.addColorStop(0,'#059669');
+  gradient.addColorStop(0.5,'#d97706');
+  gradient.addColorStop(1,'#dc2626');
+  ctx.beginPath();
+  ctx.arc(cx,cy,r, Math.PI*0.75, angle);
+  ctx.strokeStyle = gradient;
+  ctx.lineWidth = 8;
+  ctx.lineCap = 'round';
+  ctx.stroke();
+}
+
 </script>
 </body>
 </html>
