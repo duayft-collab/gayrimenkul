@@ -948,7 +948,20 @@ window.toggleAuthTab = function(tab) {
     </div>
     <!-- Firebase Status -->
     <div id="fb-status" style="display:none;font-size:10px;color:var(--ac);text-align:center;margin-top:8px;font-family:var(--mono)"></div>
-    <div class="login-version" id="l-ver"></div>
+    <div class="login-version" id="l-ver">
+      <div style="margin-top:16px;background:var(--bg3);border:1px solid var(--bg4);border-radius:10px;padding:10px 14px;text-align:left;font-family:var(--mono)">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+          <span style="font-size:10px;font-weight:800;color:var(--tx)">🏷 Versiyon Bilgisi</span>
+          <span id="lv-badge" style="background:linear-gradient(135deg,#3B6EF8,#7C3AED);color:#fff;padding:2px 8px;border-radius:20px;font-size:9px;font-weight:700">v11.1.0</span>
+        </div>
+        <div style="display:grid;grid-template-columns:auto 1fr;gap:3px 12px;font-size:10px">
+          <span style="color:var(--tx3)">Build tarihi</span><span id="lv-date" style="color:var(--tx2);font-weight:600">2026-03-15</span>
+          <span style="color:var(--tx3)">Build saati</span><span id="lv-time" style="color:var(--tx2);font-weight:600">23:15:00</span>
+          <span style="color:var(--tx3)">Platform</span><span style="color:var(--tx2);font-weight:600">Strategy Hub</span>
+          <span style="color:var(--tx3)">Veritabanı</span><span style="color:#10B981;font-weight:600">🔥 Firebase Firestore</span>
+          <span style="color:var(--tx3)">Güvenlik</span><span style="color:#10B981;font-weight:600">✓ Firebase Auth</span>
+        </div>
+      </div>
     <div class="login-users-hint" style="margin-top:10px">
       <strong>🔒 Firebase Authentication aktif</strong><br>
       Verileriniz güvenli bulut veritabanında saklanır.<br>
@@ -1366,7 +1379,7 @@ window.toggleAuthTab = function(tab) {
 </div>
 <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
 /* ════════════════════ CONFIG ════════════════════ */
-var VERSION='v11.0.0', BUILD_TS='2026-03-15 · 18:22:44';
+var VERSION='v11.1.0', BUILD_TS='2026-03-15 · 23:15:00';
 var LANG='tr';
 var FX={usd:0,eur:0,eurusd:0,gold:0,goldGram:0,btc:0,eth:0,btcChg:0};
 var mwChart=null;
@@ -1400,17 +1413,44 @@ document.getElementById('l-user').addEventListener('keydown',function(e){if(e.ke
 // doLogout handled by Firebase module
 
 function updateVerBar(){
+  // Meta bar (app içi)
   var vv=document.getElementById('vb-ver'); if(vv) vv.textContent=VERSION;
-  var vts=document.getElementById('vb-ts'); if(vts) vts.textContent='Güncelleme: '+BUILD_TS;
-  var lv=document.getElementById('l-ver'); if(lv) lv.innerHTML=VERSION+' &nbsp;·&nbsp; '+BUILD_TS+'<br>Strategy Hub © 2026';
+  var vts=document.getElementById('vb-ts'); if(vts) vts.textContent='Son güncelleme: '+BUILD_TS;
+  // Login ekranı versiyon alanı — her zaman görünür
+  // Update individual elements (pre-rendered HTML)
+  var lvBadge=document.getElementById('lv-badge'); if(lvBadge) lvBadge.textContent=VERSION;
+  var lvDate=document.getElementById('lv-date'); if(lvDate) lvDate.textContent=BUILD_TS.split(' · ')[0];
+  var lvTime=document.getElementById('lv-time'); if(lvTime) lvTime.textContent=BUILD_TS.split(' · ')[1];
+  var lv=document.getElementById('l-ver');
+  if(lv && !document.getElementById('lv-badge')){
+    lv.innerHTML=
+      '<div style="margin-top:16px;background:var(--bg3);border:1px solid var(--bg4);border-radius:10px;padding:10px 14px;text-align:left">'+
+      '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:5px">'+
+        '<span style="font-size:10px;font-weight:800;color:var(--tx);letter-spacing:.02em">🏷 Versiyon Bilgisi</span>'+
+        '<span style="background:linear-gradient(135deg,var(--ac),var(--ac2));color:#fff;padding:2px 8px;border-radius:20px;font-size:9px;font-weight:700">'+VERSION+'</span>'+
+      '</div>'+
+      '<div style="display:flex;flex-direction:column;gap:3px">'+
+        '<div style="display:flex;justify-content:space-between"><span style="color:var(--tx3)">Build tarihi</span><span style="color:var(--tx2);font-weight:600">'+BUILD_TS.split(' · ')[0]+'</span></div>'+
+        '<div style="display:flex;justify-content:space-between"><span style="color:var(--tx3)">Build saati</span><span style="color:var(--tx2);font-weight:600">'+BUILD_TS.split(' · ')[1]+'</span></div>'+
+        '<div style="display:flex;justify-content:space-between"><span style="color:var(--tx3)">Platform</span><span style="color:var(--tx2);font-weight:600">Strategy Hub</span></div>'+
+        '<div style="display:flex;justify-content:space-between"><span style="color:var(--tx3)">DB</span><span style="color:var(--gr);font-weight:600">🔥 Firebase Firestore</span></div>'+
+        '<div style="display:flex;justify-content:space-between"><span style="color:var(--tx3)">Auth</span><span style="color:var(--gr);font-weight:600">✓ Firebase Auth</span></div>'+
+      '</div>'+
+      '</div>';
+  }
+  // end
 }
-updateVerBar();
+updateVerBar(); // Called immediately on page load — login ekranını günceller
 
 /* ════════ CLOCK ════════ */
 function tick(){
   var t=new Date().toLocaleTimeString('tr-TR',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+  var d=new Date().toLocaleDateString('tr-TR',{weekday:'short',day:'2-digit',month:'short',year:'numeric'});
   var c1=document.getElementById('live-clock'); if(c1) c1.textContent=t;
   var c2=document.getElementById('live-clock-2'); if(c2) c2.textContent=t;
+  // Login ekranında da canlı saat
+  var lc=document.getElementById('login-live-clock');
+  if(lc) lc.textContent=d+' · '+t;
 }
 setInterval(tick,1000); tick();
 
@@ -2086,4 +2126,16 @@ function initApp(){
   updateDailyIslamic();loadPrayerTimes();renderWisdomQuotes();updateHijriDate();
   drawRiskGauge();renderMWChart('tl');
   // Auto-refresh
-  setInterval(function(){loadF
+  setInterval(function(){loadFX();loadCrypto();loadGold();renderAlerts();},300000);
+  setInterval(function(){var h=new Date().getHours();if(h===8||h===12)loadEconomists(true);},60000);
+  setInterval(renderInvestorQuote,3600000);
+}
+
+// ── Sayfa yüklendiğinde login ekranını hemen güncelle ──
+(function(){
+  updateVerBar();
+  tick();
+})();
+</script>
+</body>
+</html>
