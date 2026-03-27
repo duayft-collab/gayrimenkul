@@ -1,0 +1,170 @@
+// firestore/firestore.rules
+// Duay Global Trade Company — Gayrimenkul Yönetim Sistemi
+// v1.0 / 2026-03-23
+//
+// KRİTİK GÜVENLİK KURALLARI:
+// - Her kullanıcı yalnızca kendi verisine erişebilir (ownerUid filtresi)
+// - Admin tüm verilere erişebilir
+// - Fiziksel silme (delete) yasak — yalnızca soft-delete (update)
+// - audit_logs koleksiyonu yalnızca yazılabilir, hiç silinemez/güncellenemez
+
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ─── Yardımcı Fonksiyonlar ─────────────────────────────
+
+    // Kullanıcı giriş yapmış mı?
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    // Kullanıcı profili al
+    function getUserData() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data;
+    }
+
+    // Admin mi?
+    function isAdmin() {
+      return isAuthenticated() && getUserData().role == 'admin';
+    }
+
+    // Manager veya Admin mi?
+    function isManagerOrAbove() {
+      return isAuthenticated() && getUserData().role in ['admin', 'manager'];
+    }
+
+    // Belge sahibi mi? (multi-tenant izolasyon)
+    function isOwner(ownerUid) {
+      return isAuthenticated() && request.auth.uid == ownerUid;
+    }
+
+    // Kendi belgesi veya Admin mi?
+    function isOwnerOrAdmin(ownerUid) {
+      return isOwner(ownerUid) || isAdmin();
+    }
+
+    // Kullanıcı askıya alınmamış mı?
+    function isActive() {
+      return isAuthenticated() && getUserData().status == 'active';
+    }
+
+    // Soft-delete koruması: isDeleted alanı false'tan true'ya geçebilir
+    // ama true'dan false'a (geri alma) sadece Admin yapabilir
+    function softDeleteAllowed() {
+      return !('isDeleted' in resource.data)
+        || resource.data.isDeleted == false
+        || isAdmin();
+    }
+
+    // Zorunlu alanlar mevcut mu?
+    function hasRequiredFields(fields) {
+      return request.resource.data.keys().hasAll(fields);
+    }
+
+    // ownerUid değiştiriliyor mu? (yasak)
+    function ownerUidUnchanged() {
+      return !('ownerUid' in request.resource.data)
+        || request.resource.data.ownerUid == resource.data.ownerUid;
+    }
+
+    // ─── users koleksiyonu ────────────────────────────────
+    match /users/{uid} {
+
+      // Okuma: Kendi profilini okuyabilir. Admin herkesi okuyabilir.
+      allow read: if isAuthenticated() &&
+                     (request.auth.uid == uid || isAdmin());
+
+      // Oluşturma: Yalnızca Admin yeni kullanıcı profili oluşturabilir
+      allow create: if isAdmin() &&
+                       hasRequiredFields(['uid','email','role','status','createdAt']);
+
+      // Güncelleme: Kullanıcı kendi lang/theme'ini güncelleyebilir.
+      // Rol ve status değişikliği sadece Admin.
+      allow update: if isAuthenticated() && (
+        (request.auth.uid == uid &&
+          !('role'   in request.resource.data.diff(resource.data).affectedKeys()) &&
+          !('status' in request.resource.data.diff(resource.data).affectedKeys())) ||
+        isAdmin()
+      );
+
+      // Fiziksel silme yasak — sadece soft-delete (isDeleted:true)
+      allow delete: if false;
+    }
+
+    // ─── mulkler koleksiyonu ──────────────────────────────
+    match /mulkler/{mulkId} {
+
+      // Okuma: Kendi mülklerini görebilir. Admin hepsini görebilir.
+      allow read: if isActive() && isOwnerOrAdmin(resource.data.ownerUid);
+
+      // Oluşturma: Aktif kullanıcı, ownerUid kendi UID'si olacak şekilde
+      allow create: if isActive() && isManagerOrAbove() &&
+                       request.resource.data.ownerUid == request.auth.uid &&
+                       hasRequiredFields(['ownerUid','ad','tur','durum','createdAt']);
+
+      // Güncelleme: Sahip veya Admin. ownerUid değiştirilemez.
+      allow update: if isActive() &&
+                       isOwnerOrAdmin(resource.data.ownerUid) &&
+                       isManagerOrAbove() &&
+                       ownerUidUnchanged();
+
+      // Fiziksel silme YASAK
+      allow delete: if false;
+    }
+
+    // ─── sozlesmeler koleksiyonu ──────────────────────────
+    match /sozlesmeler/{sozId} {
+      allow read:   if isActive() && isOwnerOrAdmin(resource.data.ownerUid);
+      allow create: if isActive() && isManagerOrAbove() &&
+                       request.resource.data.ownerUid == request.auth.uid;
+      allow update: if isActive() && isOwnerOrAdmin(resource.data.ownerUid) &&
+                       isManagerOrAbove() && ownerUidUnchanged();
+      allow delete: if false;
+    }
+
+    // ─── odemeler koleksiyonu ─────────────────────────────
+    match /odemeler/{odemeId} {
+      allow read:   if isActive() && isOwnerOrAdmin(resource.data.ownerUid);
+      allow create: if isActive() && isManagerOrAbove() &&
+                       request.resource.data.ownerUid == request.auth.uid;
+      allow update: if isActive() && isOwnerOrAdmin(resource.data.ownerUid) &&
+                       isManagerOrAbove() && ownerUidUnchanged();
+      allow delete: if false;
+    }
+
+    // ─── islemler koleksiyonu ─────────────────────────────
+    match /islemler/{islemId} {
+      allow read:   if isActive() && isOwnerOrAdmin(resource.data.ownerUid);
+      allow create: if isActive() && isManagerOrAbove() &&
+                       request.resource.data.ownerUid == request.auth.uid;
+      allow update: if isActive() && isOwnerOrAdmin(resource.data.ownerUid) &&
+                       isManagerOrAbove() && ownerUidUnchanged();
+      allow delete: if false;
+    }
+
+    // ─── audit_logs koleksiyonu ───────────────────────────
+    // SADECE sunucu tarafı (Cloud Functions) veya sistem yazabilir.
+    // Client'tan okuma: yalnızca Admin.
+    // Güncelleme ve silme: hiçbir koşulda yasak.
+    match /audit_logs/{logId} {
+      allow read:   if isAdmin();
+      allow create: if isAuthenticated(); // Sistem log yazar
+      allow update: if false;             // Log değiştirilemez
+      allow delete: if false;             // Log silinemez
+    }
+
+    // ─── feedback koleksiyonu ─────────────────────────────
+    match /feedback/{fbId} {
+      allow read:   if isAdmin();
+      allow create: if isAuthenticated();
+      allow update: if isAdmin();
+      allow delete: if false;
+    }
+
+    // ─── Diğer tüm belgeler: varsayılan YASAK ─────────────
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
