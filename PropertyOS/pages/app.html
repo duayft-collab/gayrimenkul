@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="tr" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Property OS — Gayrimenkul Zekası</title>
+<link rel="stylesheet" href="/PropertyOS/assets/css/theme.css">
+</head>
+<body>
+
+<div id="offline-banner" class="offline-banner">Çevrimdışı modda çalışıyorsunuz.</div>
+
+<div class="app-layout" style="position:relative">
+
+  <nav class="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-icon">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+          <rect x="1" y="6" width="14" height="9" rx="1.5" stroke="white" stroke-width="1.4"/>
+          <path d="M5 6V5a3 3 0 016 0v1" stroke="white" stroke-width="1.4"/>
+        </svg>
+      </div>
+      <div class="logo-title">Property OS</div>
+      <div class="logo-sub">Duay Global Trade</div>
+    </div>
+
+    <div class="nav-section">
+      <div class="nav-label">Genel</div>
+      <div class="nav-item active" data-route="#dashboard" onclick="navigate('#dashboard')">
+        <div class="nav-dot green"></div>Dashboard
+      </div>
+      <div class="nav-item" data-route="#mulkler" onclick="navigate('#mulkler')">
+        <div class="nav-dot"></div>Mülklerim
+      </div>
+    </div>
+
+    <div class="nav-section">
+      <div class="nav-label">Analiz</div>
+      <div class="nav-item" data-route="#performans" onclick="navigate('#performans')">
+        <div class="nav-dot"></div>Performans
+      </div>
+      <div class="nav-item" data-route="#piyasa" onclick="navigate('#piyasa')">
+        <div class="nav-dot"></div>Piyasa Kurları
+      </div>
+      <div class="nav-item" data-route="#hesap" onclick="navigate('#hesap')">
+        <div class="nav-dot"></div>Hesap Makinesi
+      </div>
+    </div>
+
+    <div class="nav-section">
+      <div class="nav-label">Yönetim</div>
+      <div class="nav-item" data-route="#kira" onclick="navigate('#kira')">
+        <div class="nav-dot"></div>Kira Takibi
+      </div>
+      <div class="nav-item" data-route="#belgeler" onclick="navigate('#belgeler')">
+        <div class="nav-dot"></div>Belgeler
+      </div>
+      <div class="nav-item" data-route="#raporlar" onclick="navigate('#raporlar')">
+        <div class="nav-dot"></div>Raporlar
+      </div>
+    </div>
+
+    <div class="sidebar-footer">
+      <div class="user-name" id="user-name">—</div>
+      <div class="user-role">Admin</div>
+      <div style="display:flex;gap:8px;margin-top:10px">
+        <button class="btn btn-outline btn-sm" id="btn-lang" onclick="toggleLang()">EN</button>
+        <button class="btn btn-outline btn-sm" id="btn-theme" onclick="toggleTheme()">🌙</button>
+        <button class="btn btn-outline btn-sm" onclick="window._logout()">Çıkış</button>
+      </div>
+    </div>
+  </nav>
+
+  <div class="main">
+    <div class="topbar">
+      <div>
+        <div class="page-title" id="page-title">Dashboard</div>
+        <div class="page-sub" id="page-date"></div>
+      </div>
+      <div id="topbar-actions"></div>
+    </div>
+    <div class="content" id="content">
+      <div class="empty"><p>Yükleniyor...</p></div>
+    </div>
+  </div>
+
+</div>
+
+<div id="toast-container"></div>
+
+<script type="module">
+import { onSessionChange, logout } from '/PropertyOS/src/core/auth.js';
+import { setLang, getLang, t }     from '/PropertyOS/src/core/i18n.js';
+import { registerRoute, initRouter, navigate as nav } from '/PropertyOS/src/ui/router.js';
+import { render as renderDash }    from '/PropertyOS/src/modules/dashboard.js';
+import { render as renderMulk }    from '/PropertyOS/src/modules/mulkler.js';
+import { render as renderPerf }    from '/PropertyOS/src/modules/performans.js';
+import { render as renderPiyasa }  from '/PropertyOS/src/modules/piyasa-modul.js';
+import { render as renderHesap }   from '/PropertyOS/src/modules/hesap.js';
+import { render as renderKira }    from '/PropertyOS/src/modules/kira.js';
+
+window.navigate = nav;
+
+const pageTitles = {
+  '#dashboard': 'Dashboard', '#mulkler':'Mülklerim', '#performans':'Performans',
+  '#piyasa':'Piyasa Kurları', '#hesap':'Hesap Makinesi', '#kira':'Kira Takibi',
+  '#belgeler':'Belgeler', '#raporlar':'Raporlar',
+};
+
+registerRoute('#dashboard',  (el) => { updateTitle('#dashboard'); renderDash(el); });
+registerRoute('#mulkler',    (el) => { updateTitle('#mulkler');   renderMulk(el); });
+registerRoute('#performans', (el) => { updateTitle('#performans');renderPerf(el); });
+registerRoute('#piyasa',     (el) => { updateTitle('#piyasa');    renderPiyasa(el); });
+registerRoute('#hesap',      (el) => { updateTitle('#hesap');     renderHesap(el); });
+registerRoute('#kira',       (el) => { updateTitle('#kira');      renderKira(el); });
+registerRoute('#belgeler',   (el) => { updateTitle('#belgeler');  el.innerHTML='<div class="empty"><div class="empty-icon">📄</div><p>Belgeler modülü yakında.</p></div>'; });
+registerRoute('#raporlar',   (el) => { updateTitle('#raporlar');  el.innerHTML='<div class="empty"><div class="empty-icon">📊</div><p>Raporlar modülü yakında.</p></div>'; });
+
+function updateTitle(hash) {
+  const t = document.getElementById('page-title');
+  if (t) t.textContent = pageTitles[hash] || '';
+}
+
+onSessionChange(
+  (user, profile) => {
+    const nameEl = document.getElementById('user-name');
+    if (nameEl) nameEl.textContent = user.email.split('@')[0];
+    document.documentElement.setAttribute('data-theme', profile?.theme || 'light');
+    initRouter('#dashboard');
+  },
+  () => { window.location.href = '/PropertyOS/pages/index.html'; }
+);
+
+window._logout = async () => { await logout(); };
+
+window.toggleTheme = () => {
+  const cur = document.documentElement.getAttribute('data-theme');
+  document.documentElement.setAttribute('data-theme', cur === 'dark' ? 'light' : 'dark');
+  document.getElementById('btn-theme').textContent = cur === 'dark' ? '🌙' : '☀️';
+};
+
+window.toggleLang = () => {
+  const l = getLang() === 'tr' ? 'en' : 'tr';
+  setLang(l);
+  document.getElementById('btn-lang').textContent = l === 'tr' ? 'EN' : 'TR';
+};
+
+const dateEl = document.getElementById('page-date');
+if (dateEl) dateEl.textContent = new Date().toLocaleDateString('tr-TR', { weekday:'long', day:'numeric', month:'long', year:'numeric' });
+
+window.addEventListener('online',  () => document.getElementById('offline-banner')?.classList.remove('show'));
+window.addEventListener('offline', () => document.getElementById('offline-banner')?.classList.add('show'));
+</script>
+</body>
+</html>
