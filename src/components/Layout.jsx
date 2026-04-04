@@ -7,6 +7,9 @@ const NAV = [
     { id:'portfolio', label:'Mülklerim', icon:'📋' },
     { id:'finance', label:'Finansal Analiz', icon:'📊' },
   ]},
+  { section: 'MÜTEAHHİT', items: [
+    { id:'katkarsiligi', label:'Kat Karşılığı', icon:'🏗️' },
+  ]},
   { section: 'RADAR & TAKİP', items: [
     { id:'radar', label:'Gayrimenkul Radar', icon:'📡' },
     { id:'location', label:'Lokasyon İzleme', icon:'📍' },

@@ -7,6 +7,7 @@ import Dashboard from './pages/Dashboard';
 import Radar from './pages/Radar';
 import LocationWatch from './pages/LocationWatch';
 import LeaseIntelligence from './pages/LeaseIntelligence';
+import KatKarsiligi from './pages/KatKarsiligi';
 import { Sidebar, Toasts, Modal, VersionBar } from './components/Layout';
 
 function PlaceholderPage({ title, icon }) {
@@ -32,6 +33,7 @@ const PAGES = {
   construction: ()=><PlaceholderPage title="İnşaat Takip" icon="🏗️"/>,
   abroad:       ()=><PlaceholderPage title="Yurt Dışı" icon="🌍"/>,
   users:        ()=><PlaceholderPage title="Kullanıcılar" icon="👥"/>,
+  katkarsiligi: KatKarsiligi,
   radar:        Radar,
   location:     LocationWatch,
   lease:        LeaseIntelligence,
