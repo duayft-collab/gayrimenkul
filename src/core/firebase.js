@@ -1,16 +1,19 @@
 import { initializeApp } from 'firebase/app';
-import { getAuth } from 'firebase/auth';
-import { getFirestore } from 'firebase/firestore';
+import { getAuth }       from 'firebase/auth';
+import { getFirestore }  from 'firebase/firestore';
 
 const firebaseConfig = {
-  apiKey: "AIzaSyDNWvZjgjpzM3eUcA_xDsapWZZaOs0qwWE",
-  authDomain: "operasyon-platform.firebaseapp.com",
-  projectId: "operasyon-platform",
-  storageBucket: "operasyon-platform.firebasestorage.app",
-  messagingSenderId: "810645052589",
-  appId: "1:810645052589:web:3ac500eefa029904727a24",
+  apiKey:            import.meta.env.VITE_FB_API_KEY,
+  authDomain:        import.meta.env.VITE_FB_AUTH_DOMAIN,
+  projectId:         import.meta.env.VITE_FB_PROJECT_ID,
+  storageBucket:     import.meta.env.VITE_FB_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_FB_MESSAGING_SENDER_ID,
+  appId:             import.meta.env.VITE_FB_APP_ID,
 };
+
+const eksik = Object.entries(firebaseConfig).filter(([,v])=>!v).map(([k])=>k);
+if (eksik.length > 0) throw new Error(`[firebase.js] .env eksik: ${eksik.join(', ')}`);
 
 const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);
-export const db = getFirestore(app);
+export const db   = getFirestore(app);

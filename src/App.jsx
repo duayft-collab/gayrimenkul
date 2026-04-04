@@ -40,10 +40,16 @@ const PAGES = {
 };
 
 export default function App() {
-  const { user, loading, init } = useAuthStore();
-  const { page } = useStore();
+  const { user, loading, init: authInit } = useAuthStore();
+  const { page, init, destroy } = useStore();
 
-  useEffect(()=>{ init(); },[]);
+  useEffect(() => { authInit(); }, []);
+  useEffect(() => {
+    if (user?.workspaceId) {
+      init(user.workspaceId);
+      return () => destroy();
+    }
+  }, [user?.workspaceId]);
 
   if (loading) return (
     <div style={{minHeight:'100vh',background:'#0A0F1E',display:'flex',flexDirection:'column',
