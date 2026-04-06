@@ -1,0 +1,39 @@
+{
+  "name": "Gayrimenkul Pro — AI Property OS",
+  "short_name": "GMK Pro",
+  "description": "Gayrimenkul portföy yönetimi, kira takibi, fizibilite analizi",
+  "start_url": "/Gayrimenkul/",
+  "scope": "/Gayrimenkul/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0B0B0F",
+  "theme_color": "#C9A84C",
+  "lang": "tr-TR",
+  "dir": "ltr",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Mülkler",
+      "short_name": "Mülkler",
+      "url": "/Gayrimenkul/?page=portfolio"
+    },
+    {
+      "name": "Ödemeler",
+      "short_name": "Ödeme",
+      "url": "/Gayrimenkul/?page=odemeler"
+    },
+    {
+      "name": "Harita",
+      "short_name": "Harita",
+      "url": "/Gayrimenkul/?page=harita"
+    }
+  ],
+  "categories": ["business", "finance", "productivity"]
+}

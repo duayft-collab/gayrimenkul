@@ -17,6 +17,14 @@ import PaylasimGoruntule from './pages/PaylasimGoruntule';
 import Kiracilar from './pages/Kiracilar';
 import Kiralar from './pages/Kiralar';
 import Odemeler from './pages/Odemeler';
+import Raporlar from './pages/Raporlar';
+import IslemGecmisi from './pages/IslemGecmisi';
+import Yedekler from './pages/Yedekler';
+import Guvenlik from './pages/Guvenlik';
+import BildirimlerSayfa from './pages/Bildirimler';
+import { registerServiceWorker } from './core/swRegister';
+import { otomatikYedekKontrol } from './core/yedek';
+import { bildirimOlustur } from './core/bildirimlerDb';
 import { Sidebar, Toasts, Modal } from './components/Layout';
 import StatusBar from './components/StatusBar';
 import CommandPalette from './components/CommandPalette';
@@ -40,7 +48,12 @@ const PAGES = {
   karsilastir:  Karsilastir,
   kiracilar:    Kiracilar,
   odemeler:     Odemeler,
-  finance:      ()=><PlaceholderPage title="Finansal Analiz" icon="📊"/>,
+  raporlar:     Raporlar,
+  guvenlik:     Guvenlik,
+  yedekler:     Yedekler,
+  islemGecmisi: IslemGecmisi,
+  bildirimler:  BildirimlerSayfa,
+  finance:      Raporlar,
   rental:       Kiralar,
   calculators:  ()=><PlaceholderPage title="Hesap Makineleri" icon="🧮"/>,
   tax:          ()=><PlaceholderPage title="Vergi Hesaplama" icon="⚖️"/>,
@@ -69,16 +82,46 @@ export default function App() {
 function AppInner() {
   const { user, loading, init: authInit } = useAuthStore();
   const store = useStore();
-  const { page, init, destroy } = store;
+  const { page, init, destroy, undo } = store;
+
+  /* Service worker + PWA */
+  useEffect(() => { registerServiceWorker(); }, []);
 
   useEffect(() => { authInit(); }, []);
   useEffect(() => {
     if (user?.workspaceId) {
       init(user.workspaceId);
       browserBildirimKur();
+      // Haftalık otomatik yedek kontrolü
+      otomatikYedekKontrol(user.workspaceId, user, { enabled: true }).then(r => {
+        if (r?.gerekli) {
+          bildirimOlustur({
+            workspaceId: user.workspaceId,
+            tip: 'yedek_hazir',
+            baslik: 'Yedek Hatırlatması',
+            mesaj: 'Son yedek 7 günden eski. Yedekler sayfasından manuel al.',
+            link: 'yedekler',
+          });
+        }
+      });
       return () => destroy();
     }
   }, [user?.workspaceId]);
+
+  /* Ctrl+Z global undo */
+  useEffect(() => {
+    const onKey = (e) => {
+      if ((e.metaKey || e.ctrlKey) && (e.key === 'z' || e.key === 'Z')) {
+        // Input/textarea içindeyse atla — native undo çalışsın
+        const tag = e.target.tagName;
+        if (tag === 'INPUT' || tag === 'TEXTAREA' || e.target.isContentEditable) return;
+        e.preventDefault();
+        undo();
+      }
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [undo]);
 
   /* Saat başı kira hatırlatıcı kontrol */
   useEffect(() => {

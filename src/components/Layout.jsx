@@ -1,13 +1,14 @@
 import { useAuthStore } from '../store/auth';
 import { useStore } from '../store/app';
+import BildirimMerkezi from './BildirimMerkezi';
 
 const NAV = [
   { section: 'ANA', items: [
     { id:'dashboard', label:'Dashboard', icon:'🏠' },
+    { id:'raporlar', label:'Raporlar', icon:'📊' },
     { id:'portfolio', label:'Mülkler', icon:'📋' },
     { id:'harita', label:'Harita', icon:'🗺️' },
     { id:'takvim', label:'Takvim', icon:'📅' },
-    { id:'finance', label:'Finansal Analiz', icon:'📊' },
   ]},
   { section: 'MÜTEAHHİT', items: [
     { id:'katkarsiligi', label:'Kat Karşılığı', icon:'🏗️' },
@@ -38,6 +39,10 @@ const NAV = [
   ]},
   { section: 'AYARLAR', items: [
     { id:'settings', label:'Genel Ayarlar', icon:'⚙️' },
+    { id:'guvenlik', label:'Güvenlik', icon:'🔐' },
+    { id:'yedekler', label:'Yedekler', icon:'💾' },
+    { id:'islemGecmisi', label:'İşlem Geçmişi', icon:'📋' },
+    { id:'bildirimler', label:'Bildirimler', icon:'🔔' },
     { id:'anayasa', label:'Anayasa', icon:'⚖️' },
   ]},
 ];
@@ -79,20 +84,12 @@ export function Sidebar() {
 
 export function Topbar({ title }) {
   const { user } = useAuthStore();
-  const { alarmlar = [] } = useStore();
-  const unread = alarmlar.filter(a => !a.isRead).length;
 
   return (
     <header className="topbar">
       <div style={{fontFamily:'var(--serif)',fontSize:'1rem',fontWeight:600}}>{title}</div>
       <div style={{marginLeft:'auto',display:'flex',alignItems:'center',gap:12}}>
-        {unread > 0 && (
-          <div style={{position:'relative'}}>
-            <span>🔔</span>
-            <span style={{position:'absolute',top:-4,right:-4,background:'var(--red)',color:'white',
-              fontSize:'.6rem',fontWeight:700,padding:'1px 4px',borderRadius:99}}>{unread}</span>
-          </div>
-        )}
+        <BildirimMerkezi />
         <div style={{width:30,height:30,background:'linear-gradient(135deg,#1B4F8A,#C9A84C)',
           borderRadius:'50%',display:'flex',alignItems:'center',justifyContent:'center',
           fontSize:'.75rem',fontWeight:700}}>

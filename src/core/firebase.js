@@ -1,6 +1,6 @@
 import { initializeApp } from 'firebase/app';
 import { getAuth }       from 'firebase/auth';
-import { getFirestore }  from 'firebase/firestore';
+import { getFirestore, enableIndexedDbPersistence }  from 'firebase/firestore';
 import { getStorage }    from 'firebase/storage';
 
 const firebaseConfig = {
@@ -19,3 +19,16 @@ const app = initializeApp(firebaseConfig);
 export const auth    = getAuth(app);
 export const db      = getFirestore(app);
 export const storage = getStorage(app);
+
+/* PWA — IndexedDB offline persistence (single tab) */
+if (typeof window !== 'undefined') {
+  enableIndexedDbPersistence(db).catch((err) => {
+    if (err.code === 'failed-precondition') {
+      console.warn('[firebase] persistence: çoklu sekme aktif, offline devre dışı');
+    } else if (err.code === 'unimplemented') {
+      console.warn('[firebase] persistence: tarayıcı desteklemiyor');
+    } else {
+      console.warn('[firebase] persistence hatası:', err.message);
+    }
+  });
+}

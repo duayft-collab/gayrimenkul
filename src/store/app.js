@@ -2,6 +2,7 @@ import { create } from 'zustand';
 import { mulkleriDinle, kiralarDinle, alarmlarDinle, mulkEkle, mulkGuncelle, mulkSil } from '../core/db';
 import { kiracilariDinle } from '../core/kiracilarDb';
 import { odemeleriDinle } from '../core/odemelerDb';
+import { bildirimleriDinle } from '../core/bildirimlerDb';
 
 const TOAST_MS = 4000;
 const UNDO_MS  = 30_000;
@@ -24,6 +25,7 @@ export const useStore = create((set, get) => ({
 
   init: (workspaceId) => {
     const unsubs = [
+      bildirimleriDinle(workspaceId, null, (bildirimler) => set({ bildirimler })),
       kiracilariDinle(workspaceId, (kiracilar) => set({ kiracilar })),
       odemeleriDinle(workspaceId, (odemeler) => set(state => ({
         odemeler,
@@ -78,11 +80,31 @@ export const useStore = create((set, get) => ({
     set({ _unsubFns: [] });
   },
 
-  mulkler:   [],
-  kiralar:   [],
-  alarmlar:  [],
-  kiracilar: [],
-  odemeler:  [],
+  mulkler:    [],
+  kiralar:    [],
+  alarmlar:   [],
+  kiracilar:  [],
+  odemeler:   [],
+  bildirimler:[],
+
+  /* Ctrl+Z undo stack — inverse actions */
+  undoStack: [],
+  undoPush: (action) => set(s => ({ undoStack: [...s.undoStack, action].slice(-20) })),
+  undo: async () => {
+    const stack = get().undoStack;
+    if (stack.length === 0) {
+      get().toast('info', 'Geri alınacak işlem yok');
+      return;
+    }
+    const son = stack[stack.length - 1];
+    set({ undoStack: stack.slice(0, -1) });
+    try {
+      await son.execute();
+      get().toast('success', `↶ ${son.label || 'Son işlem'} geri alındı`);
+    } catch (e) {
+      get().toast('error', 'Geri alınamadı: ' + e.message);
+    }
+  },
 
   /** K05 — yazma sayacı merkezi */
   _kayitYazma: () => set(state => ({
