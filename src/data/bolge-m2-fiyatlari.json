@@ -1,0 +1,29 @@
+{
+  "İstanbul": {
+    "_default": 55000,
+    "Ataşehir": 72000,
+    "Kadıköy": 95000,
+    "Beşiktaş": 120000,
+    "Çekmeköy": 48000,
+    "Beylikdüzü": 52000,
+    "Üsküdar": 78000,
+    "Maltepe": 58000,
+    "Pendik": 46000,
+    "Sarıyer": 105000,
+    "Şişli": 95000,
+    "Bakırköy": 85000,
+    "Esenyurt": 42000
+  },
+  "Ankara": {
+    "_default": 32000,
+    "Çankaya": 42000,
+    "Yenimahalle": 28000,
+    "Keçiören": 24000
+  },
+  "İzmir": {
+    "_default": 38000,
+    "Konak": 48000,
+    "Bornova": 36000,
+    "Karşıyaka": 45000
+  }
+}

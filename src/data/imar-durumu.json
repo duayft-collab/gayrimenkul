@@ -1,0 +1,68 @@
+{
+  "İstanbul": {
+    "Ataşehir": {
+      "_default": { "emsal": 2.07, "taks": 0.40, "maksKat": 8, "cepheCekme": 5, "yanCekme": 3, "arkaCekme": 3, "yapiNizami": "ayrık" },
+      "Küçükbakkalköy": { "emsal": 2.50, "taks": 0.40, "maksKat": 12, "cepheCekme": 5, "yanCekme": 3, "arkaCekme": 3, "yapiNizami": "ayrık" },
+      "Barbaros": { "emsal": 2.07, "taks": 0.35, "maksKat": 8, "cepheCekme": 5, "yanCekme": 3, "arkaCekme": 3, "yapiNizami": "ayrık" }
+    },
+    "Kadıköy": {
+      "_default": { "emsal": 2.07, "taks": 0.40, "maksKat": 7, "cepheCekme": 5, "yanCekme": 3, "arkaCekme": 3, "yapiNizami": "bitişik" },
+      "Fenerbahçe": { "emsal": 1.50, "taks": 0.35, "maksKat": 5, "cepheCekme": 5, "yanCekme": 3, "arkaCekme": 3, "yapiNizami": "ayrık" },
+      "Göztepe": { "emsal": 2.07, "taks": 0.40, "maksKat": 8, "cepheCekme": 5, "yanCekme": 3, "arkaCekme": 3, "yapiNizami": "ayrık" }
+    },
+    "Beşiktaş": {
+      "_default": { "emsal": 1.80, "taks": 0.35, "maksKat": 6, "cepheCekme": 5, "yanCekme": 3, "arkaCekme": 3, "yapiNizami": "ayrık" },
+      "Etiler": { "emsal": 1.50, "taks": 0.30, "maksKat": 5, "cepheCekme": 5, "yanCekme": 3, "arkaCekme": 3, "yapiNizami": "ayrık" },
+      "Levent": { "emsal": 3.00, "taks": 0.40, "maksKat": 20, "cepheCekme": 5, "yanCekme": 5, "arkaCekme": 5, "yapiNizami": "ayrık" }
+    },
+    "Çekmeköy": {
+      "_default": { "emsal": 1.50, "taks": 0.30, "maksKat": 5, "cepheCekme": 5, "yanCekme": 3, "arkaCekme": 3, "yapiNizami": "ayrık" }
+    },
+    "Beylikdüzü": {
+      "_default": { "emsal": 2.00, "taks": 0.35, "maksKat": 10, "cepheCekme": 5, "yanCekme": 3, "arkaCekme": 3, "yapiNizami": "ayrık" }
+    },
+    "Üsküdar": {
+      "_default": { "emsal": 1.80, "taks": 0.35, "maksKat": 6, "cepheCekme": 5, "yanCekme": 3, "arkaCekme": 3, "yapiNizami": "ayrık" }
+    },
+    "Maltepe": {
+      "_default": { "emsal": 1.80, "taks": 0.35, "maksKat": 7, "cepheCekme": 5, "yanCekme": 3, "arkaCekme": 3, "yapiNizami": "ayrık" }
+    },
+    "Pendik": {
+      "_default": { "emsal": 1.80, "taks": 0.35, "maksKat": 6, "cepheCekme": 5, "yanCekme": 3, "arkaCekme": 3, "yapiNizami": "ayrık" }
+    },
+    "Sarıyer": {
+      "_default": { "emsal": 1.20, "taks": 0.25, "maksKat": 4, "cepheCekme": 5, "yanCekme": 5, "arkaCekme": 5, "yapiNizami": "ayrık" }
+    },
+    "Şişli": {
+      "_default": { "emsal": 2.50, "taks": 0.50, "maksKat": 10, "cepheCekme": 5, "yanCekme": 3, "arkaCekme": 3, "yapiNizami": "bitişik" }
+    },
+    "Bakırköy": {
+      "_default": { "emsal": 2.07, "taks": 0.40, "maksKat": 8, "cepheCekme": 5, "yanCekme": 3, "arkaCekme": 3, "yapiNizami": "ayrık" }
+    },
+    "Esenyurt": {
+      "_default": { "emsal": 2.20, "taks": 0.40, "maksKat": 12, "cepheCekme": 5, "yanCekme": 3, "arkaCekme": 3, "yapiNizami": "ayrık" }
+    }
+  },
+  "Ankara": {
+    "Çankaya": {
+      "_default": { "emsal": 2.00, "taks": 0.35, "maksKat": 8, "cepheCekme": 5, "yanCekme": 3, "arkaCekme": 3, "yapiNizami": "ayrık" }
+    },
+    "Yenimahalle": {
+      "_default": { "emsal": 1.80, "taks": 0.35, "maksKat": 7, "cepheCekme": 5, "yanCekme": 3, "arkaCekme": 3, "yapiNizami": "ayrık" }
+    },
+    "Keçiören": {
+      "_default": { "emsal": 1.60, "taks": 0.35, "maksKat": 6, "cepheCekme": 5, "yanCekme": 3, "arkaCekme": 3, "yapiNizami": "ayrık" }
+    }
+  },
+  "İzmir": {
+    "Konak": {
+      "_default": { "emsal": 2.00, "taks": 0.40, "maksKat": 7, "cepheCekme": 5, "yanCekme": 3, "arkaCekme": 3, "yapiNizami": "bitişik" }
+    },
+    "Bornova": {
+      "_default": { "emsal": 1.80, "taks": 0.35, "maksKat": 7, "cepheCekme": 5, "yanCekme": 3, "arkaCekme": 3, "yapiNizami": "ayrık" }
+    },
+    "Karşıyaka": {
+      "_default": { "emsal": 2.00, "taks": 0.40, "maksKat": 8, "cepheCekme": 5, "yanCekme": 3, "arkaCekme": 3, "yapiNizami": "ayrık" }
+    }
+  }
+}
