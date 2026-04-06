@@ -4,11 +4,14 @@ import { useStore } from '../store/app';
 const NAV = [
   { section: 'ANA', items: [
     { id:'dashboard', label:'Dashboard', icon:'🏠' },
-    { id:'portfolio', label:'Mülklerim', icon:'📋' },
+    { id:'portfolio', label:'Mülkler', icon:'📋' },
+    { id:'harita', label:'Harita', icon:'🗺️' },
+    { id:'takvim', label:'Takvim', icon:'📅' },
     { id:'finance', label:'Finansal Analiz', icon:'📊' },
   ]},
   { section: 'MÜTEAHHİT', items: [
     { id:'katkarsiligi', label:'Kat Karşılığı', icon:'🏗️' },
+    { id:'karsilastir', label:'Karşılaştır', icon:'⚖️' },
   ]},
   { section: 'RADAR & TAKİP', items: [
     { id:'radar', label:'Gayrimenkul Radar', icon:'📡' },

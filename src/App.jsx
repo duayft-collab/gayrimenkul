@@ -9,8 +9,15 @@ import LocationWatch from './pages/LocationWatch';
 import LeaseIntelligence from './pages/LeaseIntelligence';
 import KatKarsiligi from './pages/KatKarsiligi';
 import Anayasa from './pages/Anayasa';
+import Mulkler from './pages/Mulkler';
+import Harita from './pages/Harita';
+import Takvim from './pages/Takvim';
+import Karsilastir from './pages/Karsilastir';
+import PaylasimGoruntule from './pages/PaylasimGoruntule';
 import { Sidebar, Toasts, Modal } from './components/Layout';
 import StatusBar from './components/StatusBar';
+import CommandPalette from './components/CommandPalette';
+import AIAsistan from './components/AIAsistan';
 
 function PlaceholderPage({ title, icon }) {
   return (
@@ -23,7 +30,10 @@ function PlaceholderPage({ title, icon }) {
 
 const PAGES = {
   dashboard:    Dashboard,
-  portfolio:    ()=><PlaceholderPage title="Mülklerim" icon="📋"/>,
+  portfolio:    Mulkler,
+  harita:       Harita,
+  takvim:       Takvim,
+  karsilastir:  Karsilastir,
   finance:      ()=><PlaceholderPage title="Finansal Analiz" icon="📊"/>,
   rental:       ()=><PlaceholderPage title="Kira Yönetimi" icon="🔑"/>,
   calculators:  ()=><PlaceholderPage title="Hesap Makineleri" icon="🧮"/>,
@@ -44,6 +54,13 @@ const PAGES = {
 };
 
 export default function App() {
+  /* Public paylaşım route — hooks'tan ÖNCE, tüm lifecycle bypass edilir */
+  const shareToken = new URLSearchParams(window.location.search).get('share');
+  if (shareToken) return <PaylasimGoruntule token={shareToken} />;
+  return <AppInner />;
+}
+
+function AppInner() {
   const { user, loading, init: authInit } = useAuthStore();
   const { page, init, destroy } = useStore();
 
@@ -76,6 +93,8 @@ export default function App() {
       </div>
       <Toasts />
       <Modal />
+      <CommandPalette />
+      <AIAsistan />
       <StatusBar />
     </div>
   );
