@@ -24,6 +24,7 @@ const NAV = [
     { id:'rental', label:'Kiralar', icon:'🔑' },
     { id:'odemeler', label:'Ödemeler', icon:'💰' },
     { id:'tapuToplama', label:'Tapu Toplama', icon:'📎' },
+    { id:'vergiPaneli', label:'Vergi Paneli', icon:'📊' },
     { id:'lease', label:'Sözleşme Zekası', icon:'📄' },
     { id:'hesapMakineleri', label:'Hesap Makineleri', icon:'🧮' },
     { id:'tax', label:'Vergi Hesaplama', icon:'⚖️' },

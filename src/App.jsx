@@ -23,6 +23,7 @@ import TapuToplama from './pages/TapuToplama';
 import TapuToplamaForm from './pages/TapuToplamaForm';
 import KiraciPortal from './pages/KiraciPortal';
 import HesapMakineleri from './pages/HesapMakineleri';
+import VergiPaneli from './pages/VergiPaneli';
 import IslemGecmisi from './pages/IslemGecmisi';
 import Yedekler from './pages/Yedekler';
 import Guvenlik from './pages/Guvenlik';
@@ -61,14 +62,14 @@ const PAGES = {
   tapuToplama:  TapuToplama,
   hesapMakineleri: HesapMakineleri,
   calculators:  HesapMakineleri,
+  vergiPaneli:  VergiPaneli,
+  tax:          VergiPaneli,
   guvenlik:     Guvenlik,
   yedekler:     Yedekler,
   islemGecmisi: IslemGecmisi,
   bildirimler:  BildirimlerSayfa,
   finance:      Raporlar,
   rental:       Kiralar,
-  calculators:  ()=><PlaceholderPage title="Hesap Makineleri" icon="🧮"/>,
-  tax:          ()=><PlaceholderPage title="Vergi Hesaplama" icon="⚖️"/>,
   news:         ()=><PlaceholderPage title="Haberler" icon="📰"/>,
   library:      ()=><PlaceholderPage title="Kütüphane" icon="📚"/>,
   geo:          ()=><PlaceholderPage title="Konum Analizi" icon="🗺️"/>,
