@@ -14,10 +14,14 @@ import Harita from './pages/Harita';
 import Takvim from './pages/Takvim';
 import Karsilastir from './pages/Karsilastir';
 import PaylasimGoruntule from './pages/PaylasimGoruntule';
+import Kiracilar from './pages/Kiracilar';
+import Kiralar from './pages/Kiralar';
+import Odemeler from './pages/Odemeler';
 import { Sidebar, Toasts, Modal } from './components/Layout';
 import StatusBar from './components/StatusBar';
 import CommandPalette from './components/CommandPalette';
 import AIAsistan from './components/AIAsistan';
+import { browserBildirimKur, kiraHatirlaticiKontrol } from './core/bildirim';
 
 function PlaceholderPage({ title, icon }) {
   return (
@@ -34,8 +38,10 @@ const PAGES = {
   harita:       Harita,
   takvim:       Takvim,
   karsilastir:  Karsilastir,
+  kiracilar:    Kiracilar,
+  odemeler:     Odemeler,
   finance:      ()=><PlaceholderPage title="Finansal Analiz" icon="📊"/>,
-  rental:       ()=><PlaceholderPage title="Kira Yönetimi" icon="🔑"/>,
+  rental:       Kiralar,
   calculators:  ()=><PlaceholderPage title="Hesap Makineleri" icon="🧮"/>,
   tax:          ()=><PlaceholderPage title="Vergi Hesaplama" icon="⚖️"/>,
   news:         ()=><PlaceholderPage title="Haberler" icon="📰"/>,
@@ -62,15 +68,33 @@ export default function App() {
 
 function AppInner() {
   const { user, loading, init: authInit } = useAuthStore();
-  const { page, init, destroy } = useStore();
+  const store = useStore();
+  const { page, init, destroy } = store;
 
   useEffect(() => { authInit(); }, []);
   useEffect(() => {
     if (user?.workspaceId) {
       init(user.workspaceId);
+      browserBildirimKur();
       return () => destroy();
     }
   }, [user?.workspaceId]);
+
+  /* Saat başı kira hatırlatıcı kontrol */
+  useEffect(() => {
+    if (!user) return;
+    const kontrol = () => {
+      const s = useStore.getState();
+      kiraHatirlaticiKontrol({
+        odemeler: s.odemeler,
+        kiralar:  s.kiralar,
+        kiracilar: s.kiracilar,
+      });
+    };
+    const t = setTimeout(kontrol, 5000); // ilk kontrol 5sn sonra (listeners yüklenmesini bekle)
+    const i = setInterval(kontrol, 60 * 60 * 1000); // saat başı
+    return () => { clearTimeout(t); clearInterval(i); };
+  }, [user?.uid]);
 
   if (loading) return (
     <div style={{minHeight:'100vh',background:'#0A0F1E',display:'flex',flexDirection:'column',

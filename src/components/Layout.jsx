@@ -17,8 +17,10 @@ const NAV = [
     { id:'radar', label:'Gayrimenkul Radar', icon:'📡' },
     { id:'location', label:'Lokasyon İzleme', icon:'📍' },
   ]},
-  { section: 'KİRA YÖNETİMİ', items: [
-    { id:'rental', label:'Kira Takip', icon:'🔑' },
+  { section: 'İŞLEMLER', items: [
+    { id:'kiracilar', label:'Kiracılar', icon:'👤' },
+    { id:'rental', label:'Kiralar', icon:'🔑' },
+    { id:'odemeler', label:'Ödemeler', icon:'💰' },
     { id:'lease', label:'Sözleşme Zekası', icon:'📄' },
     { id:'calculators', label:'Hesap Makineleri', icon:'🧮' },
     { id:'tax', label:'Vergi Hesaplama', icon:'⚖️' },

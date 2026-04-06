@@ -1,5 +1,7 @@
 import { create } from 'zustand';
 import { mulkleriDinle, kiralarDinle, alarmlarDinle, mulkEkle, mulkGuncelle, mulkSil } from '../core/db';
+import { kiracilariDinle } from '../core/kiracilarDb';
+import { odemeleriDinle } from '../core/odemelerDb';
 
 const TOAST_MS = 4000;
 const UNDO_MS  = 30_000;
@@ -22,6 +24,15 @@ export const useStore = create((set, get) => ({
 
   init: (workspaceId) => {
     const unsubs = [
+      kiracilariDinle(workspaceId, (kiracilar) => set({ kiracilar })),
+      odemeleriDinle(workspaceId, (odemeler) => set(state => ({
+        odemeler,
+        firestoreStats: {
+          ...state.firestoreStats,
+          okumaSayisi: state.firestoreStats.okumaSayisi + odemeler.length,
+          sonIslem: Date.now(),
+        },
+      }))),
       mulkleriDinle(workspaceId, (mulkler) => set(state => {
         const tahmin = (mulkler.length + state.kiralar.length + state.alarmlar.length) * 2;
         return {
@@ -67,9 +78,11 @@ export const useStore = create((set, get) => ({
     set({ _unsubFns: [] });
   },
 
-  mulkler:  [],
-  kiralar:  [],
-  alarmlar: [],
+  mulkler:   [],
+  kiralar:   [],
+  alarmlar:  [],
+  kiracilar: [],
+  odemeler:  [],
 
   /** K05 — yazma sayacı merkezi */
   _kayitYazma: () => set(state => ({

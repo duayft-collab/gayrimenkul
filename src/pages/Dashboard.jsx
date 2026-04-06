@@ -1,8 +1,11 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import { useStore } from '../store/app';
 import { Topbar, TickerBar } from '../components/Layout';
-import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
+import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, BarChart, Bar } from 'recharts';
 import { seedTestData } from '../core/seedData';
+import { odemeTlKurus, gecikmisFiltre, yaklasanFiltre } from '../core/odemelerDb';
+
+const fmtTL = (kurus) => '₺' + new Intl.NumberFormat('tr-TR').format(Math.round((kurus || 0) / 100));
 
 const FMT = (n) => new Intl.NumberFormat('tr-TR').format(Math.round(n));
 
@@ -22,7 +25,7 @@ const PIE_DATA = [
 ];
 
 export default function Dashboard() {
-  const { mulkler, kiralar, alarmlar } = useStore();
+  const { mulkler, kiralar, alarmlar, odemeler, kiracilar, setPage } = useStore();
   const seeded = useRef(false);
 
   useEffect(() => {
@@ -32,11 +35,52 @@ export default function Dashboard() {
     }
   }, [mulkler.length]);
 
-  const totalVal    = mulkler.reduce((s,p) => s + (p.currentPrice||0), 0) || 16700000;
+  /* Kira geliri — kurus bazlı */
+  const kiraGelirKurus = useMemo(() => {
+    const ayBas = new Date(); ayBas.setDate(1); ayBas.setHours(0, 0, 0, 0);
+    const ayBit = new Date(ayBas); ayBit.setMonth(ayBit.getMonth() + 1);
+    let beklenen = 0, tahsil = 0;
+    for (const o of (odemeler || [])) {
+      if (o.isDeleted || o.tip !== 'kira') continue;
+      const v = o.vadeTarihi?.toDate ? o.vadeTarihi.toDate() : new Date(o.vadeTarihi || 0);
+      if (v >= ayBas && v < ayBit) {
+        const tl = odemeTlKurus(o);
+        beklenen += tl;
+        if (o.durum === 'odendi') tahsil += tl;
+      }
+    }
+    return { beklenen, tahsil };
+  }, [odemeler]);
+
+  const gecikmisKurus = useMemo(() => {
+    return gecikmisFiltre(odemeler).reduce((a, o) => a + odemeTlKurus(o), 0);
+  }, [odemeler]);
+
+  const yaklasanOdemeler = useMemo(() => yaklasanFiltre(odemeler, 7), [odemeler]);
+
+  /* Mülk başına gelir top 5 */
+  const topMulkGelir = useMemo(() => {
+    const map = {};
+    for (const o of (odemeler || [])) {
+      if (o.isDeleted || o.tip !== 'kira' || o.durum !== 'odendi') continue;
+      map[o.mulkId] = (map[o.mulkId] || 0) + odemeTlKurus(o);
+    }
+    return Object.entries(map)
+      .map(([mulkId, tl]) => ({
+        ad: ((mulkler || []).find(m => m.id === mulkId)?.ad || 'Bilinmeyen').slice(0, 18),
+        gelir: Math.round(tl / 100),
+      }))
+      .sort((a, b) => b.gelir - a.gelir)
+      .slice(0, 5);
+  }, [odemeler, mulkler]);
+
+  const totalVal    = mulkler.reduce((s,p) => s + (p.currentPrice||p.fiyat||0), 0) || 16700000;
   const totalBuy    = mulkler.reduce((s,p) => s + (p.buyPrice||0), 0)     || 11600000;
-  const monthlyRent = kiralar.reduce((s,r) => s + (r.monthlyRent||0), 0)  || 83000;
+  const monthlyRent = Math.round(kiraGelirKurus.tahsil / 100) || 83000;
   const unread      = alarmlar.filter(a => !a.isRead).length || 3;
   const roi         = totalBuy > 0 ? ((totalVal - totalBuy) / totalBuy * 100) : 44.2;
+  const tahsilOran  = kiraGelirKurus.beklenen > 0 ? Math.round(kiraGelirKurus.tahsil / kiraGelirKurus.beklenen * 100) : 0;
+  const aktifKiraSayisi = (kiralar || []).filter(k => !k.isDeleted && k.durum === 'dolu').length;
 
   return (
     <div>
@@ -62,8 +106,8 @@ export default function Dashboard() {
           {[
             {lbl:'Toplam Portföy',val:`₺${FMT(totalVal/100)} TL`,sub:`${mulkler.length||4} mülk`,color:'var(--blue)',ico:'🏠'},
             {lbl:'Toplam Getiri',val:`%${roi.toFixed(1)}`,sub:`₺${FMT((totalVal-totalBuy)/100)} TL kar`,color:'var(--green)',ico:'📈'},
-            {lbl:'Aylık Kira',val:`₺${FMT(monthlyRent)} TL`,sub:`${kiralar.filter(r=>r.status==='active').length||2} aktif kiracı`,color:'var(--gold)',ico:'🔑'},
-            {lbl:'Alarmlar',val:unread.toString(),sub:'Acil işlem gerekiyor',color:'var(--red)',ico:'🔔'},
+            {lbl:'Bu Ay Kira (Tahsil)',val:`₺${FMT(monthlyRent)}`,sub:`${aktifKiraSayisi||2} aktif · %${tahsilOran} tahsil`,color:'var(--gold)',ico:'🔑'},
+            {lbl:'Gecikmiş / Alarm',val:gecikmisKurus > 0 ? fmtTL(gecikmisKurus) : unread.toString(),sub: gecikmisKurus > 0 ? 'Gecikmiş ödeme' : 'Acil işlem',color:'var(--red)',ico:'🔔'},
           ].map((k,i)=>(
             <div key={i} className="kpi" style={{'--kc':k.color}}>
               <div className="kpi-lbl">{k.lbl}</div>
@@ -117,6 +161,59 @@ export default function Dashboard() {
             </div>
           </div>
         </div>
+
+        {/* Kira Geliri Paneli */}
+        <div className="g2" style={{marginBottom:20}}>
+          <div className="card">
+            <div style={{fontFamily:'var(--serif)',fontSize:'.95rem',fontWeight:600,marginBottom:10}}>💰 Bu Ay: Beklenen vs Tahsil</div>
+            <div style={{display:'flex',justifyContent:'space-between',fontSize:'.82rem',marginBottom:6}}>
+              <span>Beklenen: <b>{fmtTL(kiraGelirKurus.beklenen)}</b></span>
+              <span>Tahsil: <b style={{color:'var(--green)'}}>{fmtTL(kiraGelirKurus.tahsil)}</b></span>
+            </div>
+            <div className="prog"><div className="prog-fill" style={{width:`${tahsilOran}%`,background:'linear-gradient(90deg,#22C55E,#C9A84C)'}}/></div>
+            <div style={{fontSize:'.72rem',color:'var(--muted)',marginTop:6}}>%{tahsilOran} tahsil edildi</div>
+            {gecikmisKurus > 0 && (
+              <div style={{marginTop:10,padding:8,background:'rgba(239,68,68,.1)',borderLeft:'3px solid var(--red)',borderRadius:4,fontSize:'.78rem'}}>
+                ⚠️ Gecikmiş: <b style={{color:'var(--red)'}}>{fmtTL(gecikmisKurus)}</b>
+                <button className="btn btn-sm btn-ghost" style={{marginLeft:8}} onClick={() => setPage('rental')}>Görüntüle</button>
+              </div>
+            )}
+          </div>
+          <div className="card">
+            <div style={{fontFamily:'var(--serif)',fontSize:'.95rem',fontWeight:600,marginBottom:10}}>📈 Mülk Başına Gelir (Top 5)</div>
+            {topMulkGelir.length === 0 ? (
+              <div style={{fontSize:'.78rem',color:'var(--muted)'}}>Henüz tahsil edilmiş ödeme yok</div>
+            ) : (
+              <ResponsiveContainer width="100%" height={140}>
+                <BarChart data={topMulkGelir} layout="vertical" margin={{top:0,right:10,bottom:0,left:80}}>
+                  <XAxis type="number" tick={{fill:'#666',fontSize:10}} tickFormatter={(v) => (v/1000).toFixed(0) + 'K'} />
+                  <YAxis dataKey="ad" type="category" tick={{fill:'#888',fontSize:10}} width={80} />
+                  <Tooltip contentStyle={{background:'#1A2540',border:'1px solid #333',fontSize:11}} formatter={(v) => '₺' + v.toLocaleString('tr-TR')} />
+                  <Bar dataKey="gelir" fill="#C9A84C" />
+                </BarChart>
+              </ResponsiveContainer>
+            )}
+          </div>
+        </div>
+
+        {/* Yaklaşan Vadeler */}
+        {yaklasanOdemeler.length > 0 && (
+          <div className="card" style={{marginBottom:20}}>
+            <div style={{fontFamily:'var(--serif)',fontSize:'.95rem',fontWeight:600,marginBottom:10}}>📅 Yaklaşan Vadeler (7 gün)</div>
+            <div style={{display:'flex',flexDirection:'column',gap:6}}>
+              {yaklasanOdemeler.slice(0, 5).map(o => {
+                const v = o.vadeTarihi?.toDate ? o.vadeTarihi.toDate() : new Date(o.vadeTarihi);
+                const k = (kiracilar || []).find(x => x.id === o.kiraciId);
+                return (
+                  <div key={o.id} style={{display:'flex',justifyContent:'space-between',padding:'8px 10px',background:'var(--surface2)',borderRadius:6,fontSize:'.8rem'}}>
+                    <span>{v.toLocaleDateString('tr-TR')} · <b>{k?.adSoyad || '—'}</b></span>
+                    <span style={{color:'var(--gold)',fontWeight:600}}>{fmtTL(odemeTlKurus(o))}</span>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
 
         {/* Alarmlar */}
         <div className="card">
