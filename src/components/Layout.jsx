@@ -70,8 +70,8 @@ export function Sidebar() {
 
 export function Topbar({ title }) {
   const { user } = useAuthStore();
-  const { alerts } = useStore();
-  const unread = alerts.filter(a => !a.isRead).length;
+  const { alarmlar = [] } = useStore();
+  const unread = alarmlar.filter(a => !a.isRead).length;
 
   return (
     <header className="topbar">
