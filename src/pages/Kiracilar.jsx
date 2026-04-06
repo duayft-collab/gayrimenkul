@@ -9,6 +9,117 @@ import { Topbar } from '../components/Layout';
 import { kiraciEkle, kiraciSil, kiraciGeriAl } from '../core/kiracilarDb';
 import { kiraciBakiyeHesapla } from '../core/odemelerDb';
 import KiraciDetay from '../components/KiraciDetay';
+import { kiraciPortalTokenUret, kportalTokenIptal } from '../core/paylasim';
+
+function PortalLinkModal({ kiraci, ws, onClose, toast }) {
+  const mevcut = kiraci.portalToken && kiraci.portalAktif !== false;
+  const mevcutUrl = mevcut
+    ? `${window.location.origin}${window.location.pathname}#/kportal/${kiraci.portalToken}`
+    : null;
+
+  const [url, setUrl] = useState(mevcutUrl);
+  const [calisiyor, setCalisiyor] = useState(false);
+
+  const uret = async () => {
+    setCalisiyor(true);
+    try {
+      const r = await kiraciPortalTokenUret(kiraci.id, ws);
+      setUrl(r.url);
+      toast('success', mevcut ? 'Yeni link oluşturuldu (eski iptal)' : 'Portal linki oluşturuldu');
+    } catch (e) {
+      toast('error', e.message);
+    } finally {
+      setCalisiyor(false);
+    }
+  };
+
+  const iptal = async () => {
+    if (!confirm('Portal linki iptal edilsin mi? Kiracı erişemeyecek.')) return;
+    setCalisiyor(true);
+    try {
+      await kportalTokenIptal(kiraci.id);
+      setUrl(null);
+      toast('success', 'Link iptal edildi');
+    } catch (e) {
+      toast('error', e.message);
+    } finally {
+      setCalisiyor(false);
+    }
+  };
+
+  const kopyala = () => {
+    if (!url) return;
+    navigator.clipboard.writeText(url).then(() => toast('success', 'Kopyalandı'));
+  };
+
+  const waMetin = `Merhaba ${kiraci.adSoyad || ''}, kira ödemenizi kolayca bildirebileceğiniz özel linkiniz hazır:\n\n${url}\n\nBu link üzerinden:\n✓ Bu ay kira tutarınızı görebilir\n✓ Ödeme dekontunuzu yükleyebilir\n✓ Hesap özetinizi indirebilirsiniz\n\nİyi günler.`;
+
+  const telTemiz = (kiraci.telefon || '').replace(/\D/g, '');
+  const waUrl = telTemiz
+    ? `https://wa.me/${telTemiz}?text=${encodeURIComponent(waMetin)}`
+    : `https://wa.me/?text=${encodeURIComponent(waMetin)}`;
+  const smsUrl = telTemiz
+    ? `sms:${telTemiz}?body=${encodeURIComponent('Ödeme portalınız: ' + url)}`
+    : `sms:?body=${encodeURIComponent('Ödeme portalınız: ' + url)}`;
+  const mailUrl = `mailto:${kiraci.email || ''}?subject=${encodeURIComponent('Kira Ödeme Portalınız')}&body=${encodeURIComponent(waMetin)}`;
+  const qrUrl = url ? `https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent(url)}` : null;
+
+  return (
+    <div className="modal-bg" onClick={onClose}>
+      <div className="modal" onClick={e => e.stopPropagation()} style={{ width: 560, maxHeight: '90vh', overflowY: 'auto' }}>
+        <div className="modal-head">
+          <div className="modal-title">🔗 Portal Linki — {kiraci.adSoyad}</div>
+          <button className="btn btn-sm btn-ghost" onClick={onClose}>×</button>
+        </div>
+        <div className="modal-body">
+          {!url ? (
+            <>
+              <div style={{ padding: 14, background: 'rgba(201,168,76,.08)', borderLeft: '3px solid var(--gold)', borderRadius: 8, fontSize: '.82rem', marginBottom: 14 }}>
+                Kiracı için özel bir self-servis ödeme bildirim portalı linki oluşturun. Kiracı bu link üzerinden:
+                <ul style={{ margin: '6px 0 0 20px', padding: 0, fontSize: '.78rem', color: 'var(--muted)' }}>
+                  <li>Bakiyesini görebilir</li>
+                  <li>Ödeme dekontu yükleyebilir</li>
+                  <li>Hesap özetini indirebilir</li>
+                </ul>
+              </div>
+              <button className="btn btn-gold" onClick={uret} disabled={calisiyor} style={{ width: '100%' }}>
+                {calisiyor ? 'Oluşturuluyor...' : '🔗 Portal Linki Oluştur'}
+              </button>
+            </>
+          ) : (
+            <>
+              <div style={{ display: 'grid', gridTemplateColumns: '220px 1fr', gap: 14, marginBottom: 14 }}>
+                {qrUrl && <img src={qrUrl} alt="QR" style={{ width: '100%', borderRadius: 8, background: '#fff' }} />}
+                <div>
+                  <div style={{ fontSize: '.68rem', color: 'var(--muted)', marginBottom: 4 }}>Link:</div>
+                  <div style={{
+                    fontFamily: 'monospace', fontSize: '.68rem',
+                    padding: 10, background: 'var(--surface2)',
+                    borderRadius: 6, wordBreak: 'break-all', marginBottom: 10,
+                  }}>{url}</div>
+                  <button className="btn btn-sm btn-gold" onClick={kopyala} style={{ width: '100%' }}>📋 Kopyala</button>
+                </div>
+              </div>
+
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 6, marginBottom: 12 }}>
+                <a href={waUrl} target="_blank" rel="noreferrer" className="btn btn-primary btn-sm" style={{ textAlign: 'center', justifyContent: 'center' }}>💬 WhatsApp</a>
+                <a href={smsUrl} className="btn btn-ghost btn-sm" style={{ textAlign: 'center', justifyContent: 'center' }}>📱 SMS</a>
+                <a href={mailUrl} className="btn btn-ghost btn-sm" style={{ textAlign: 'center', justifyContent: 'center' }}>📧 E-posta</a>
+              </div>
+
+              <button className="btn btn-ghost" onClick={uret} disabled={calisiyor} style={{ width: '100%', marginBottom: 6 }}>
+                🔄 Yeni Link Üret (eskisi iptal olur)
+              </button>
+              <button className="btn btn-danger" onClick={iptal} disabled={calisiyor} style={{ width: '100%' }}>
+                ⚠ Linki İptal Et
+              </button>
+            </>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
 
 const fmtTL = (kurus) => '₺' + new Intl.NumberFormat('tr-TR').format(Math.round((kurus || 0) / 100));
 
@@ -19,6 +130,7 @@ export default function Kiracilar() {
   const [filtre, setFiltre] = useState('tumu'); // tumu | aktif | pasif | borclu
   const [detay, setDetay] = useState(null);
   const [yeni, setYeni] = useState(null);
+  const [portalModal, setPortalModal] = useState(null);
   const ws = user?.workspaceId || 'ws_001';
 
   const aktif = useMemo(() => (kiracilar || []).filter(k => !k.isDeleted), [kiracilar]);
@@ -149,7 +261,12 @@ export default function Kiracilar() {
                     <td style={{ padding: 10, textAlign: 'right', color: k.gecikmisKurus > 0 ? 'var(--red)' : 'var(--muted)', fontWeight: k.gecikmisKurus > 0 ? 700 : 400 }}>
                       {fmtTL(k.gecikmisKurus)}
                     </td>
-                    <td style={{ padding: 10, textAlign: 'right' }}>
+                    <td style={{ padding: 10, textAlign: 'right', whiteSpace: 'nowrap' }}>
+                      <button
+                        className="btn btn-sm btn-ghost"
+                        title="Portal Linki"
+                        onClick={(e) => { e.stopPropagation(); setPortalModal(k); }}
+                      >🔗</button>
                       <button className="btn btn-sm btn-danger" onClick={(e) => { e.stopPropagation(); sil(k); }}>×</button>
                     </td>
                   </tr>
@@ -161,6 +278,15 @@ export default function Kiracilar() {
       </div>
 
       {detay && <KiraciDetay kiraci={detay} onClose={() => setDetay(null)} onSaved={() => {}} />}
+
+      {portalModal && (
+        <PortalLinkModal
+          kiraci={portalModal}
+          ws={ws}
+          onClose={() => setPortalModal(null)}
+          toast={toast}
+        />
+      )}
 
       {yeni && (
         <div className="modal-bg" onClick={() => setYeni(null)}>

@@ -4,9 +4,107 @@
  * @anayasa K02 token crypto.randomUUID · K06 aktif flag · K11 workspace
  */
 import {
-  collection, doc, addDoc, updateDoc, getDocs, query, where, serverTimestamp, getDoc
+  collection, doc, addDoc, updateDoc, getDocs, query, where, serverTimestamp, getDoc, arrayUnion
 } from 'firebase/firestore';
 import { db } from './firebase';
+
+/* ══════════ KIRACI PORTAL TOKEN (kportal_ prefix) ══════════
+ * Hesap özeti paylaşımı (kiraci_) ile çakışmaz.
+ * kiracilar/{id} dokümanı üzerinde portalToken + portalAktif + portalTokenGecmis.
+ */
+
+const KIRACILAR = 'kiracilar';
+
+function rastgeleHex(byte = 32) {
+  if (typeof crypto !== 'undefined' && crypto.getRandomValues) {
+    const a = new Uint8Array(byte);
+    crypto.getRandomValues(a);
+    return Array.from(a).map(b => b.toString(16).padStart(2, '0')).join('');
+  }
+  return Date.now().toString(16) + Math.random().toString(16).slice(2, 18);
+}
+
+/** Kiracı için portal token üret (mevcut varsa geçmişe atar) */
+export async function kiraciPortalTokenUret(kiraciId, workspaceId) {
+  if (!kiraciId) throw new Error('Kiracı ID yok');
+  const token = 'kportal_' + rastgeleHex(32);
+  try {
+    const kSnap = await getDoc(doc(db, KIRACILAR, kiraciId));
+    if (!kSnap.exists()) throw new Error('Kiracı bulunamadı');
+    const mevcut = kSnap.data();
+    const updates = {
+      portalToken: token,
+      portalTokenOlusturma: serverTimestamp(),
+      portalAktif: true,
+    };
+    // Eski token varsa geçmişe at (son 5 sakla)
+    if (mevcut.portalToken) {
+      const eski = (mevcut.portalTokenGecmis || []).slice(-4);
+      eski.push({
+        token: mevcut.portalToken,
+        iptal: new Date().toISOString(),
+      });
+      updates.portalTokenGecmis = eski;
+    }
+    await updateDoc(doc(db, KIRACILAR, kiraciId), updates);
+
+    const base = window.location.origin + window.location.pathname;
+    const url = `${base}#/kportal/${token}`;
+    return { token, url };
+  } catch (e) {
+    console.error('[kiraciPortalTokenUret]', e);
+    throw new Error('Portal linki oluşturulamadı: ' + e.message);
+  }
+}
+
+/** Public — token ile kiracıyı bul (workspace context'iyle) */
+export async function kportalTokenCoz(token) {
+  if (!token || !token.startsWith('kportal_')) {
+    throw new Error('Geçersiz token formatı');
+  }
+  try {
+    const q = query(
+      collection(db, KIRACILAR),
+      where('portalToken', '==', token),
+    );
+    const snap = await getDocs(q);
+    if (snap.empty) throw new Error('Link geçersiz veya iptal edilmiş');
+    const kSnap = snap.docs[0];
+    const kiraci = { id: kSnap.id, ...kSnap.data() };
+    // Backward compat: portalAktif undefined ise true
+    if (kiraci.portalAktif === false) {
+      throw new Error('Link iptal edilmiş');
+    }
+    if (kiraci.isDeleted) {
+      throw new Error('Kiracı kaydı silinmiş');
+    }
+    return kiraci;
+  } catch (e) {
+    throw e;
+  }
+}
+
+/** Portal linkini iptal et */
+export async function kportalTokenIptal(kiraciId) {
+  try {
+    await updateDoc(doc(db, KIRACILAR, kiraciId), {
+      portalAktif: false,
+      portalIptalZaman: serverTimestamp(),
+    });
+    // Audit log — islemLogu
+    try {
+      await addDoc(collection(db, 'islemLogu'), {
+        tip: 'portal_iptal',
+        entityTip: 'kiraci',
+        entityId: kiraciId,
+        zaman: serverTimestamp(),
+        isDeleted: false,
+      });
+    } catch {}
+  } catch (e) {
+    throw new Error('Link iptal edilemedi: ' + e.message);
+  }
+}
 
 const COL = 'paylasimlar';
 

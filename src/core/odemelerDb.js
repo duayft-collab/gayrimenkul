@@ -137,14 +137,28 @@ export function odemeTlKurus(o) {
   return Math.round(k * (o.kurDegeri || 1));
 }
 
-/** Kiracı bakiyesi (kuruş) — alacak - tahsil */
+/** Kiracı bakiyesi (kuruş) — alacak - tahsil
+ *  K: backward compat — eski kayıtlarda durum yoksa 'onaylandi' kabul
+ *     yeni kportal durumları: 'beklemede' | 'onaylandi' | 'reddedildi'
+ *     eski odeme durumları: 'odendi' | 'bekliyor' | 'gecikmis'
+ *  Bakiye sadece ONAYLANDI / ODENDI olanları düşer.
+ */
 export function kiraciBakiyeHesapla(odemeler) {
   let beklenen = 0, odenen = 0, gecikmis = 0;
   const bugun = new Date(); bugun.setHours(0, 0, 0, 0);
   for (const o of (odemeler || [])) {
+    if (o.isDeleted) continue;
     const tl = odemeTlKurus(o);
-    if (o.durum === 'odendi') odenen += tl;
-    else {
+    // Durum normalizasyonu
+    const d = o.durum || 'onaylandi';
+    const tamamlandi = (d === 'odendi' || d === 'onaylandi');
+    if (tamamlandi) {
+      odenen += tl;
+    } else if (d === 'reddedildi') {
+      // Red edilmiş — bakiyeye sayma
+      continue;
+    } else {
+      // beklemede / bekliyor / gecikmis
       beklenen += tl;
       const v = o.vadeTarihi?.toDate ? o.vadeTarihi.toDate() : new Date(o.vadeTarihi || 0);
       if (v < bugun) gecikmis += tl;
@@ -154,6 +168,6 @@ export function kiraciBakiyeHesapla(odemeler) {
     toplamBeklenenKurus: beklenen,
     toplamOdenenKurus:   odenen,
     gecikmisKurus:       gecikmis,
-    bakiyeKurus:         beklenen - 0, // kalan borç
+    bakiyeKurus:         beklenen, // kalan borç
   };
 }

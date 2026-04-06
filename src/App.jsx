@@ -21,6 +21,7 @@ import Raporlar from './pages/Raporlar';
 import Karsilastirma from './pages/Karsilastirma';
 import TapuToplama from './pages/TapuToplama';
 import TapuToplamaForm from './pages/TapuToplamaForm';
+import KiraciPortal from './pages/KiraciPortal';
 import IslemGecmisi from './pages/IslemGecmisi';
 import Yedekler from './pages/Yedekler';
 import Guvenlik from './pages/Guvenlik';
@@ -82,13 +83,18 @@ const PAGES = {
 
 export default function App() {
   /* Public route'lar — hooks'tan ÖNCE, tüm lifecycle bypass edilir */
-  // 1) Tapu toplama formu: #/tapu-form/TOKEN
   const hash = (window.location.hash || '').replace(/^#/, '');
+  // 1) Tapu toplama formu: #/tapu-form/TOKEN
   if (hash.startsWith('/tapu-form/')) {
-    const tapuToken = hash.replace('/tapu-form/', '').split('?')[0];
+    const tapuToken = decodeURIComponent(hash.replace('/tapu-form/', '').split('?')[0]);
     return <TapuToplamaForm token={tapuToken} />;
   }
-  // 2) Paylaşım görüntüleme: ?share=TOKEN
+  // 2) Kiracı portal: #/kportal/TOKEN
+  if (hash.startsWith('/kportal/')) {
+    const kportalToken = decodeURIComponent(hash.replace('/kportal/', '').split('?')[0]);
+    return <KiraciPortal token={kportalToken} />;
+  }
+  // 3) Paylaşım görüntüleme: ?share=TOKEN
   const shareToken = new URLSearchParams(window.location.search).get('share');
   if (shareToken) return <PaylasimGoruntule token={shareToken} />;
   return <AppInner />;
