@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react';
 import { paylasimTokenCoz } from '../core/paylasim';
 import { doc, updateDoc } from 'firebase/firestore';
 import { db } from '../core/firebase';
+import HesapOzetiPublic from '../components/HesapOzetiPublic';
 
 const fmtTL = (v) => '₺' + new Intl.NumberFormat('tr-TR').format(v || 0);
 
@@ -64,6 +65,28 @@ export default function PaylasimGoruntule({ token }) {
           <div style={{ color: '#888' }}>{hata}</div>
         </div>
       </div>
+    );
+  }
+
+  // Kiracı hesap özeti paylaşımı
+  if (pay.tipKiraci) {
+    if (!pay.kiraci) {
+      return (
+        <div style={{ minHeight: '100vh', background: '#0A0F1E', color: '#E8ECF4', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <div style={{ textAlign: 'center' }}>
+            <div style={{ fontSize: '3rem' }}>🚫</div>
+            <div style={{ color: '#EF4444' }}>Kiracı bilgisi bulunamadı</div>
+          </div>
+        </div>
+      );
+    }
+    return (
+      <HesapOzetiPublic
+        kiraci={pay.kiraci}
+        kiralar={pay.kiralar || []}
+        odemeler={pay.odemeler || []}
+        workspaceId={pay.workspaceId}
+      />
     );
   }
 

@@ -65,11 +65,19 @@ export default function KiraFormu({ onClose, onSaved }) {
       const aylikKuruş = Math.round(form.aylikKiraTL * 100);
       const depKuruş = Math.round(form.depozitoTL * 100);
 
+      // Sonraki artış tarihi: başlangıç + 1 yıl (eğer artış koşulu varsa)
+      const basTarihi = new Date(form.baslangicTarihi);
+      let sonrakiArtis = null;
+      if (form.artisKosulu && form.artisKosulu !== 'yok') {
+        sonrakiArtis = new Date(basTarihi);
+        sonrakiArtis.setFullYear(sonrakiArtis.getFullYear() + 1);
+      }
+
       const kiraId = await kiraEkle(ws, user, {
         mulkId: form.mulkId,
         kiraciId,
         durum: 'dolu',
-        baslangicTarihi: new Date(form.baslangicTarihi),
+        baslangicTarihi: basTarihi,
         bitisTarihi: form.bitisTarihi ? new Date(form.bitisTarihi) : null,
         aylikKiraKurus: aylikKuruş,
         paraBirim: form.paraBirim,
@@ -77,6 +85,8 @@ export default function KiraFormu({ onClose, onSaved }) {
         depozitoKurus: depKuruş,
         artisKosulu: form.artisKosulu,
         artisOrani: form.artisOrani,
+        sonArtisTarihi: null,
+        sonrakiArtisTarihi: sonrakiArtis,
         sozlesmeNo: form.sozlesmeNo,
         notlar: form.notlar,
       });

@@ -25,6 +25,7 @@ import BildirimlerSayfa from './pages/Bildirimler';
 import { registerServiceWorker } from './core/swRegister';
 import { otomatikYedekKontrol } from './core/yedek';
 import { bildirimOlustur } from './core/bildirimlerDb';
+import { tumKiralarIcinOtomatikUret } from './core/kiraHesap';
 import { Sidebar, Toasts, Modal } from './components/Layout';
 import StatusBar from './components/StatusBar';
 import CommandPalette from './components/CommandPalette';
@@ -106,6 +107,35 @@ function AppInner() {
       });
       return () => destroy();
     }
+  }, [user?.workspaceId]);
+
+  /* Günde 1 kez otomatik kira üretimi — K02: localStorage sadece tarih string */
+  useEffect(() => {
+    if (!user?.workspaceId) return;
+    const bugun = new Date().toISOString().split('T')[0];
+    const sonKontrol = localStorage.getItem('kiraUretimSonKontrol');
+    if (sonKontrol === bugun) return;
+
+    // Store'un yüklenmesini bekle (~3sn) — listener'lar veri çekmiş olsun
+    const t = setTimeout(async () => {
+      try {
+        const s = useStore.getState();
+        const sonuc = await tumKiralarIcinOtomatikUret(user.workspaceId, user, s.odemeler);
+        localStorage.setItem('kiraUretimSonKontrol', bugun);
+        if (sonuc?.uretildi > 0) {
+          await bildirimOlustur({
+            workspaceId: user.workspaceId,
+            tip: 'sistem',
+            baslik: 'Otomatik kira üretildi',
+            mesaj: `${sonuc.uretildi} yeni ödeme oluşturuldu (${sonuc.kiraSayisi} aktif sözleşme)`,
+            link: 'odemeler',
+          });
+        }
+      } catch (e) {
+        console.warn('[auto kira üretim]', e.message);
+      }
+    }, 3000);
+    return () => clearTimeout(t);
   }, [user?.workspaceId]);
 
   /* Ctrl+Z global undo */

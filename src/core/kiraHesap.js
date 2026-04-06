@@ -3,8 +3,9 @@
  * @description Otomatik kira üretimi + TÜFE artışı + USD/EUR kur çevirimi
  * @anayasa K10 — tüm para kuruş integer
  */
-import { odemeEkle, kiraciOdemeleri } from './odemelerDb';
-import { kiracininKiralari, kiralarListele } from './kiralarDb';
+import { odemeEkle, odemeGuncelle, kiraciOdemeleri } from './odemelerDb';
+import { kiracininKiralari, kiralarListele, kiraGuncelle } from './kiralarDb';
+import { kiraTakvimeYaz } from './kiraTakvimSync';
 
 /**
  * Belirli bir kira için başlangıç-bitiş arası aylık ödemeleri üret
@@ -60,7 +61,7 @@ export async function otomatikKiraUret(workspaceId, user, kira, mevcutOdemeler =
 }
 
 /**
- * Tüm aktif kiralar için eksik ayları üret
+ * Tüm aktif kiralar için eksik ayları üret + takvim sync
  */
 export async function tumKiralarIcinOtomatikUret(workspaceId, user, odemeler) {
   const kiralar = await kiralarListele(workspaceId);
@@ -69,8 +70,60 @@ export async function tumKiralarIcinOtomatikUret(workspaceId, user, odemeler) {
   for (const k of aktif) {
     const r = await otomatikKiraUret(workspaceId, user, k, odemeler);
     toplamUret += r.uretildi;
+    // İdempotent takvim sync
+    try { await kiraTakvimeYaz(workspaceId, k); }
+    catch (e) { console.warn('[toplu sync]', e.message); }
   }
-  return { kiraSayisi: aktif.length, toplamUret };
+  return { kiraSayisi: aktif.length, toplamUret, uretildi: toplamUret };
+}
+
+/**
+ * TÜFE bazlı kira artışı uygula
+ * - Kira aylikKiraKurus güncelle
+ * - sonArtisTarihi/sonrakiArtisTarihi güncelle
+ * - Gelecekteki bekleyen ödemeleri yeni tutarla güncelle
+ * - Takvim sync otomatik (kiraGuncelle içinden)
+ */
+export async function tufeArtisUygula(workspaceId, user, kira, yeniOran, gecerlilikTarihi) {
+  if (!kira?.id) throw new Error('Kira bulunamadı');
+  const eskiKurus = kira.aylikKiraKurus || 0;
+  const yeniTutarKurus = Math.round(eskiKurus * (1 + (yeniOran || 0) / 100));
+
+  const gecerlilik = new Date(gecerlilikTarihi);
+  const sonrakiArtis = new Date(gecerlilik);
+  sonrakiArtis.setFullYear(sonrakiArtis.getFullYear() + 1);
+
+  // 1) Kira güncelle (bu aynı zamanda takvim sync'ler)
+  await kiraGuncelle(workspaceId, user, kira.id, {
+    aylikKiraKurus: yeniTutarKurus,
+    sonArtisTarihi: gecerlilik,
+    sonrakiArtisTarihi: sonrakiArtis,
+    artisOrani: yeniOran,
+  });
+
+  // 2) Gelecekteki bekleyen kira ödemelerini yeni tutara taşı
+  let guncellenen = 0;
+  try {
+    const odemeler = await kiraciOdemeleri(workspaceId, kira.kiraciId);
+    for (const o of odemeler) {
+      if (o.kiraId !== kira.id) continue;
+      if (o.tip !== 'kira') continue;
+      if (o.durum === 'odendi') continue;
+      const v = o.vadeTarihi?.toDate ? o.vadeTarihi.toDate() : new Date(o.vadeTarihi || 0);
+      if (v >= gecerlilik) {
+        await odemeGuncelle(workspaceId, user, o.id, { tutarKurus: yeniTutarKurus });
+        guncellenen++;
+      }
+    }
+  } catch (e) {
+    console.warn('[tufeArtisUygula] ödeme güncelleme:', e.message);
+  }
+
+  return {
+    eskiKurus, yeniTutarKurus,
+    fark: yeniTutarKurus - eskiKurus,
+    guncellenenOdemeSayisi: guncellenen,
+  };
 }
 
 /**

@@ -4,10 +4,11 @@
  * @anayasa K06 soft delete · K10 kuruş · K11 workspace · K12 RBAC · K14 log
  */
 import {
-  collection, doc, addDoc, updateDoc, serverTimestamp, query, where, getDocs, onSnapshot
+  collection, doc, addDoc, updateDoc, serverTimestamp, query, where, getDocs, getDoc, onSnapshot
 } from 'firebase/firestore';
 import { db } from './firebase';
 import { yetkiZorunlu } from './rbac';
+import { kiraTakvimeYaz, kiradanOlaylariSil } from './kiraTakvimSync';
 
 const COL = 'kiralar';
 const LOG = 'activity_logs';
@@ -55,6 +56,9 @@ export async function kiraEkle(workspaceId, user, veri) {
       deletedAt: null,
     });
     log(workspaceId, user, 'create', ref.id, { mulkId: veri.mulkId });
+    // Takvim sync (best-effort, hata varsa kira kaydı bozulmaz)
+    try { await kiraTakvimeYaz(workspaceId, { id: ref.id, ...veri }); }
+    catch (e) { console.warn('[kiraEkle] takvim sync:', e.message); }
     return ref.id;
   } catch (e) {
     throw new Error('Kira kaydedilemedi: ' + e.message);
@@ -68,6 +72,11 @@ export async function kiraGuncelle(workspaceId, user, id, veri) {
     guncellenme: serverTimestamp(),
   });
   log(workspaceId, user, 'update', id, {});
+  // Güncel snapshot ile takvim sync
+  try {
+    const snap = await getDoc(doc(db, COL, id));
+    if (snap.exists()) await kiraTakvimeYaz(workspaceId, { id, ...snap.data() });
+  } catch (e) { console.warn('[kiraGuncelle] takvim sync:', e.message); }
 }
 
 export async function kiraSil(workspaceId, user, id) {
@@ -79,6 +88,9 @@ export async function kiraSil(workspaceId, user, id) {
     guncellenme: serverTimestamp(),
   });
   log(workspaceId, user, 'delete', id, {});
+  // Takvim olaylarını temizle
+  try { await kiradanOlaylariSil(workspaceId, id); }
+  catch (e) { console.warn('[kiraSil] takvim temizlik:', e.message); }
 }
 
 export async function kiralarListele(workspaceId) {

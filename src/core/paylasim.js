@@ -58,7 +58,7 @@ export async function paylasimIptal(paylasimId) {
   await updateDoc(doc(db, COL, paylasimId), { aktif: false, iptalZaman: serverTimestamp() });
 }
 
-/** Public — token ile paylaşım çöz */
+/** Public — token ile paylaşım çöz. mulkId 'kiraci_' prefix'li ise kiracı branch. */
 export async function paylasimTokenCoz(token) {
   if (!token) return null;
   const q = query(collection(db, COL), where('token', '==', token), where('aktif', '==', true));
@@ -70,7 +70,39 @@ export async function paylasimTokenCoz(token) {
     const bitis = pay.sonKullanim.toDate ? pay.sonKullanim.toDate() : new Date(pay.sonKullanim);
     if (bitis.getTime() < Date.now()) return { ...pay, suresiGecti: true };
   }
-  // Mülkü çek
+
+  // Kiracı branch — mulkId 'kiraci_<id>' ise hesap özeti paylaşımı
+  if (typeof pay.mulkId === 'string' && pay.mulkId.startsWith('kiraci_')) {
+    pay.tipKiraci = true;
+    const kiraciId = pay.mulkId.split('kiraci_')[1];
+    try {
+      const kSnap = await getDoc(doc(db, 'kiracilar', kiraciId));
+      if (kSnap.exists()) pay.kiraci = { id: kSnap.id, ...kSnap.data() };
+      // Kiracıya ait kiraları çek
+      const qKira = query(
+        collection(db, 'kiralar'),
+        where('workspaceId', '==', pay.workspaceId),
+        where('kiraciId', '==', kiraciId),
+        where('isDeleted', '==', false),
+      );
+      const kiraSnap = await getDocs(qKira);
+      pay.kiralar = kiraSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+      // Ödemeler
+      const qOde = query(
+        collection(db, 'odemeler'),
+        where('workspaceId', '==', pay.workspaceId),
+        where('kiraciId', '==', kiraciId),
+        where('isDeleted', '==', false),
+      );
+      const odeSnap = await getDocs(qOde);
+      pay.odemeler = odeSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+    } catch (e) {
+      console.warn('[paylasim] kiracı yüklenemedi:', e.message);
+    }
+    return pay;
+  }
+
+  // Mülk branch (mevcut davranış)
   try {
     const mulkSnap = await getDoc(doc(db, 'mulkler', pay.mulkId));
     if (mulkSnap.exists()) pay.mulk = { id: mulkSnap.id, ...mulkSnap.data() };

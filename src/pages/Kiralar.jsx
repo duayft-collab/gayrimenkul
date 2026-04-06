@@ -8,7 +8,7 @@ import { useStore } from '../store/app';
 import { Topbar } from '../components/Layout';
 import KiraFormu from '../components/KiraFormu';
 import KiraciDetay from '../components/KiraciDetay';
-import { tumKiralarIcinOtomatikUret } from '../core/kiraHesap';
+import { tumKiralarIcinOtomatikUret, tufeArtisUygula } from '../core/kiraHesap';
 import { kiraSil } from '../core/kiralarDb';
 
 const fmtTL = (kurus) => '₺' + new Intl.NumberFormat('tr-TR').format(Math.round((kurus || 0) / 100));
@@ -28,6 +28,7 @@ export default function Kiralar() {
   const [yeni, setYeni] = useState(false);
   const [detayKiraci, setDetayKiraci] = useState(null);
   const [uretiyor, setUretiyor] = useState(false);
+  const [artisModal, setArtisModal] = useState(null);
   const ws = user?.workspaceId || 'ws_001';
 
   const aktif = useMemo(() => (kiralar || []).filter(k => !k.isDeleted), [kiralar]);
@@ -175,16 +176,28 @@ export default function Kiralar() {
                   <div><span style={{ color: 'var(--muted)' }}>Artış:</span> {secili.artisKosulu} {secili.artisOrani ? '%' + secili.artisOrani : ''}</div>
                   <div><span style={{ color: 'var(--muted)' }}>Sözleşme:</span> {secili.sozlesmeNo || '—'}</div>
                 </div>
+                {secili.sonArtisTarihi && (
+                  <div style={{ marginTop: 12, padding: 10, background: 'rgba(201,168,76,.08)', borderLeft: '3px solid var(--gold)', borderRadius: 6, fontSize: '.75rem' }}>
+                    📈 <b>Son Artış:</b> {fmtDate(secili.sonArtisTarihi)} · %{secili.artisOrani || 0} →{' '}
+                    <b style={{ color: 'var(--gold)' }}>{fmtTL(secili.aylikKiraKurus)}</b>
+                    {secili.sonrakiArtisTarihi && (
+                      <div style={{ fontSize: '.68rem', color: 'var(--muted)', marginTop: 2 }}>
+                        Sonraki artış: {fmtDate(secili.sonrakiArtisTarihi)}
+                      </div>
+                    )}
+                  </div>
+                )}
                 {secili.notlar && (
                   <div style={{ marginTop: 12, padding: 10, background: 'var(--surface2)', borderRadius: 6, fontSize: '.78rem' }}>
                     {secili.notlar}
                   </div>
                 )}
-                <div style={{ display: 'flex', gap: 6, marginTop: 14 }}>
+                <div style={{ display: 'flex', gap: 6, marginTop: 14, flexWrap: 'wrap' }}>
                   <button className="btn btn-sm btn-gold" onClick={() => {
                     const k = (kiracilar || []).find(x => x.id === secili.kiraciId);
                     if (k) setDetayKiraci(k);
                   }}>👤 Kiracı Detay</button>
+                  <button className="btn btn-sm btn-primary" onClick={() => setArtisModal(secili)}>📈 Artış Uygula</button>
                   <button className="btn btn-sm btn-danger" onClick={() => sil(secili)}>Sil</button>
                 </div>
               </div>
@@ -195,6 +208,105 @@ export default function Kiralar() {
 
       {yeni && <KiraFormu onClose={() => setYeni(false)} onSaved={() => {}} />}
       {detayKiraci && <KiraciDetay kiraci={detayKiraci} onClose={() => setDetayKiraci(null)} onSaved={() => {}} />}
+      {artisModal && (
+        <ArtisModal
+          kira={artisModal}
+          onClose={() => setArtisModal(null)}
+          onSaved={(r) => {
+            setArtisModal(null);
+            setSecili(null);
+            toast('success', `Artış uygulandı: ${fmtTL(r.eskiKurus)} → ${fmtTL(r.yeniTutarKurus)} · ${r.guncellenenOdemeSayisi} ödeme güncellendi`);
+          }}
+        />
+      )}
+    </div>
+  );
+}
+
+function ArtisModal({ kira, onClose, onSaved }) {
+  const { user } = useAuthStore();
+  const { toast } = useStore();
+  const ws = user?.workspaceId || 'ws_001';
+  const [oran, setOran] = useState(kira.artisOrani || 48);
+  const [gecerlilik, setGecerlilik] = useState(() => {
+    const d = new Date();
+    d.setMonth(d.getMonth() + 1);
+    d.setDate(1);
+    return d.toISOString().slice(0, 10);
+  });
+  const [calisiyor, setCalisiyor] = useState(false);
+
+  const yeniKurus = Math.round((kira.aylikKiraKurus || 0) * (1 + oran / 100));
+  const fark = yeniKurus - (kira.aylikKiraKurus || 0);
+
+  const uygula = async () => {
+    setCalisiyor(true);
+    try {
+      const r = await tufeArtisUygula(ws, user, kira, oran, new Date(gecerlilik));
+      onSaved?.(r);
+    } catch (e) {
+      toast('error', e.message);
+    } finally {
+      setCalisiyor(false);
+    }
+  };
+
+  return (
+    <div className="modal-bg" onClick={onClose}>
+      <div className="modal" onClick={e => e.stopPropagation()} style={{ width: 520 }}>
+        <div className="modal-head">
+          <div className="modal-title">📈 Kira Artışı Uygula</div>
+          <button className="btn btn-sm btn-ghost" onClick={onClose}>×</button>
+        </div>
+        <div className="modal-body">
+          <div style={{ padding: 12, background: 'var(--surface2)', borderRadius: 8, marginBottom: 14, fontSize: '.82rem' }}>
+            <div><b>Mevcut Kira:</b> {fmtTL(kira.aylikKiraKurus)}</div>
+            <div><b>Artış Koşulu:</b> {kira.artisKosulu || 'TUFE'}</div>
+            <div><b>Son Artış:</b> {kira.sonArtisTarihi
+              ? (kira.sonArtisTarihi?.toDate ? kira.sonArtisTarihi.toDate() : new Date(kira.sonArtisTarihi)).toLocaleDateString('tr-TR')
+              : 'Henüz yok'}</div>
+          </div>
+
+          <div className="fgrid2">
+            <div className="fgroup">
+              <label className="flbl">Artış Oranı (%)</label>
+              <input type="number" step="0.5" className="input" value={oran}
+                onChange={e => setOran(parseFloat(e.target.value) || 0)} />
+              <div style={{ fontSize: '.65rem', color: 'var(--muted)', marginTop: 4 }}>
+                💡 TÜİK TÜFE son 12 ay ortalamasını kontrol edin
+              </div>
+            </div>
+            <div className="fgroup">
+              <label className="flbl">Geçerlilik Tarihi</label>
+              <input type="date" className="input" value={gecerlilik}
+                onChange={e => setGecerlilik(e.target.value)} />
+            </div>
+          </div>
+
+          <div style={{
+            padding: 14, background: 'rgba(201,168,76,.08)',
+            border: '1px solid rgba(201,168,76,.3)', borderRadius: 8,
+          }}>
+            <div style={{ fontSize: '.72rem', color: 'var(--muted)', marginBottom: 4 }}>Yeni Aylık Kira</div>
+            <div style={{ fontSize: '1.4rem', fontWeight: 700, color: 'var(--gold)' }}>
+              {fmtTL(yeniKurus)}
+            </div>
+            <div style={{ fontSize: '.75rem', color: 'var(--green)', marginTop: 2 }}>
+              +{fmtTL(fark)} ({oran > 0 ? '+' : ''}%{oran.toFixed(1)})
+            </div>
+          </div>
+
+          <div style={{ fontSize: '.7rem', color: 'var(--muted)', marginTop: 10 }}>
+            ⚠️ Geçerlilik tarihinden sonraki bekleyen kira ödemeleri otomatik olarak yeni tutara güncellenecek.
+          </div>
+        </div>
+        <div className="modal-foot">
+          <button className="btn btn-ghost" onClick={onClose}>Vazgeç</button>
+          <button className="btn btn-gold" onClick={uygula} disabled={calisiyor || oran === 0}>
+            {calisiyor ? 'Uygulanıyor...' : '✓ Artışı Uygula'}
+          </button>
+        </div>
+      </div>
     </div>
   );
 }
