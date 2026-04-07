@@ -4,6 +4,7 @@
  */
 import { useEffect, useRef, useState } from 'react';
 import { kportalKiraciOzet, kportalDekontYukle, kportalOdemeBildir } from '../core/kportalDb';
+import '../styles/kportal.css';
 
 const fmtTL = (kurus) => '₺' + new Intl.NumberFormat('tr-TR').format(Math.round((kurus || 0) / 100));
 const fmtTarih = (ts) => {
@@ -94,226 +95,153 @@ export default function KiraciPortal({ token }) {
   const borcVar = ozet.bakiyeKurus > 0 || ozet.gecikmisKurus > 0;
   const k = ozet.kiraci;
   const mulk = ozet.mulk;
+  const kiraciAdi = (k.adSoyad || '').split(/\s+/)[0] || 'Sayın Kiracı';
+  const mulkAdi = mulk?.ad || (mulk ? `${mulk.il || ''} ${mulk.ilce || ''}`.trim() : 'Mülk');
+  const bekleyenler = (ozet.odemeler || []).filter(o => o.durum !== 'odendi' && o.durum !== 'onaylandi');
+  const odemeSayisi = bekleyenler.length;
+  const basariMesaji = !!basariModal;
 
   return (
-    <div style={BG}>
-      <div style={{ maxWidth: 420, margin: '0 auto', padding: '16px 14px 100px' }}>
-        {/* Üst bar */}
-        <div style={{ textAlign: 'center', marginBottom: 20 }}>
-          <div style={{
-            fontFamily: 'Playfair Display,Georgia,serif',
-            fontSize: '1.2rem', color: '#C9A84C', fontWeight: 700,
-          }}>🏛️ Gayrimenkul Pro</div>
-          {mulk && (
-            <div style={{ fontSize: '.72rem', color: '#888', marginTop: 4 }}>
-              {mulk.ad} · {mulk.il}/{mulk.ilce}
+    <div className="kp">
+      <div className={`kp-aurora ${basariMesaji ? 'basari' : ''}`} />
+      <div className={`kp-orb kp-orb-1 ${basariMesaji ? 'basari' : ''}`} />
+      <div className="kp-orb kp-orb-2" />
+      <div className="kp-grain" />
+
+      <div className="kp-shell">
+        {/* Header */}
+        <div className="kp-head">
+          <div className="kp-marka">
+            <div className="kp-logo">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M3 21h18M5 21V7l7-4 7 4v14M9 9h.01M15 9h.01M9 13h.01M15 13h.01M9 17h.01M15 17h.01"/>
+              </svg>
             </div>
-          )}
+            <div className="kp-marka-ad">Emlak<em>Pro</em></div>
+          </div>
+          <div className="kp-secure"><span className="dot" />SSL</div>
         </div>
 
-        {/* Karşılama */}
-        <div style={{
-          fontSize: '1.3rem', fontWeight: 600, marginBottom: 8,
-          fontFamily: 'Playfair Display,Georgia,serif',
-        }}>
-          Merhaba {k.adSoyad?.split(' ')[0] || 'değerli kiracı'} 👋
-        </div>
-        <div style={{ fontSize: '.78rem', color: '#888', marginBottom: 20 }}>
-          Kira ödemelerinizi buradan bildirebilirsiniz
-        </div>
+        {!basariMesaji && (
+          <>
+            {/* Hero */}
+            <div className="kp-hero">
+              <div className="kp-greeting">Hoş geldiniz</div>
+              <h1 className="kp-baslik">{kiraciAdi},<br />ödemeniz <em>hazır</em></h1>
+              <p className="kp-altyazi"><b>{mulkAdi}</b> için bekleyen {odemeSayisi} ödemeniz var. Dekontunuzu yükleyin, dakikalar içinde onaylansın.</p>
+            </div>
 
-        {/* Bakiye kartı */}
-        <div style={{
-          background: borcVar
-            ? 'linear-gradient(135deg,rgba(239,68,68,.15),rgba(239,68,68,.05))'
-            : 'linear-gradient(135deg,rgba(34,197,94,.15),rgba(34,197,94,.05))',
-          border: `1px solid ${borcVar ? '#EF4444' : '#22C55E'}`,
-          borderRadius: 16, padding: 20, marginBottom: 14,
-        }}>
-          <div style={{ fontSize: '.72rem', color: '#888', textTransform: 'uppercase', letterSpacing: 1 }}>
-            {borcVar ? 'Borç Bakiyeniz' : 'Bakiyeniz'}
-          </div>
-          <div style={{
-            fontFamily: 'Playfair Display,Georgia,serif',
-            fontSize: '2.2rem', fontWeight: 700,
-            color: borcVar ? '#EF4444' : '#22C55E',
-            marginTop: 6,
-          }}>
-            {fmtTL(ozet.bakiyeKurus)}
-          </div>
-          <div style={{ fontSize: '.72rem', color: '#888', marginTop: 4 }}>
-            {borcVar
-              ? `${fmtTL(ozet.gecikmisKurus)} gecikmiş`
-              : `Toplam ödenen: ${fmtTL(ozet.toplamOdenenKurus)}`}
-          </div>
-        </div>
-
-        {/* Bu ay kira kartı */}
-        <div style={{
-          background: '#161a24', border: '1px solid #2a2f3e',
-          borderRadius: 14, padding: 18, marginBottom: 14,
-        }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 10 }}>
-            <div>
-              <div style={{ fontSize: '.68rem', color: '#888', textTransform: 'uppercase' }}>Bu Ay Kira</div>
-              <div style={{
-                fontSize: '1.6rem', fontWeight: 700, color: '#C9A84C', marginTop: 4,
-              }}>
-                {fmtTL(ozet.buAyTutarKurus)}
+            {hata && (
+              <div className="kp-mesaj hata">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
+                  <circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/>
+                </svg>
+                <span>{hata}</span>
               </div>
-              {ozet.buAyVade && (
-                <div style={{ fontSize: '.72rem', color: '#888', marginTop: 3 }}>
-                  📅 Vade: {fmtTarih(ozet.buAyVade)}
-                </div>
-              )}
-            </div>
-            <div style={{
-              padding: '4px 10px', borderRadius: 99,
-              background: DURUM_STIL[ozet.buAyDurum]?.bg || 'rgba(136,136,136,.12)',
-              color: DURUM_STIL[ozet.buAyDurum]?.renk || '#888',
-              fontSize: '.65rem', fontWeight: 700,
-            }}>
-              {DURUM_STIL[ozet.buAyDurum]?.ad || 'Durum yok'}
-            </div>
-          </div>
+            )}
 
-          <button
-            onClick={() => setBildirimModal(true)}
-            style={{
-              width: '100%', padding: '14px 18px',
-              background: 'linear-gradient(135deg,#E8C96A,#C9A84C)',
-              color: '#0B0B0F', border: 0, borderRadius: 10,
-              fontSize: '.95rem', fontWeight: 700, cursor: 'pointer',
-              minHeight: 48,
-            }}
-          >
-            📤 ÖDEME BİLDİR
-          </button>
-
-          {ozet.ibanBilgi && (
-            <button
-              onClick={() => ibanKopyala(ozet.ibanBilgi)}
-              style={{
-                width: '100%', marginTop: 8, padding: '10px',
-                background: '#0A0F1E', color: '#C9A84C',
-                border: '1px solid #2a2f3e', borderRadius: 8,
-                fontSize: '.75rem', fontFamily: 'monospace', cursor: 'pointer',
-              }}
-            >
-              {kopyaladi ? '✓ IBAN Kopyalandı' : `📋 ${ozet.ibanBilgi}`}
-            </button>
-          )}
-        </div>
-
-        {/* Geçmiş ödemeler */}
-        <div style={{
-          background: '#161a24', border: '1px solid #2a2f3e',
-          borderRadius: 14, padding: 16, marginBottom: 14,
-        }}>
-          <div style={{
-            fontFamily: 'Playfair Display,Georgia,serif',
-            fontSize: '.95rem', color: '#C9A84C', fontWeight: 600, marginBottom: 10,
-          }}>
-            📋 Geçmiş Ödemeler
-          </div>
-          {ozet.odemeler.length === 0 ? (
-            <div style={{ color: '#666', fontSize: '.78rem', textAlign: 'center', padding: 20 }}>
-              Henüz ödeme kaydı yok
-            </div>
-          ) : (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-              {ozet.odemeler.map(o => {
-                const stil = DURUM_STIL[o.durum] || DURUM_STIL.onaylandi;
-                return (
-                  <div key={o.id} style={{
-                    display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-                    padding: '10px 12px', background: '#0A0F1E', borderRadius: 8,
-                    borderLeft: `3px solid ${stil.renk}`,
-                  }}>
-                    <div>
-                      <div style={{ fontSize: '.78rem', color: '#ccc' }}>
-                        {fmtTarih(o.vadeTarihi)}
-                      </div>
-                      <div style={{ fontSize: '.66rem', color: '#888' }}>
-                        {o.tip || 'kira'}{o.aciklama ? ' · ' + o.aciklama.slice(0, 24) : ''}
-                      </div>
-                    </div>
-                    <div style={{ textAlign: 'right' }}>
-                      <div style={{ fontSize: '.85rem', fontWeight: 600, color: '#C9A84C' }}>
-                        {fmtTL(o.tutarKurus)}
-                      </div>
-                      <div style={{ fontSize: '.65rem', color: stil.renk, fontWeight: 700 }}>
-                        {stil.ico} {stil.ad}
-                      </div>
+            {/* Total tutar */}
+            {ozet.bakiyeKurus > 0 && (
+              <div className="kp-total">
+                <div className="kp-total-row">
+                  <div>
+                    <div className="kp-total-label">{borcVar ? 'Borç Bakiyeniz' : 'Bakiyeniz'}</div>
+                    <div className="kp-total-amount">
+                      <span className="kp-total-currency">₺</span>{Math.round(ozet.bakiyeKurus / 100).toLocaleString('tr-TR')}
                     </div>
                   </div>
-                );
-              })}
+                  <div className="kp-total-meta">
+                    <div className="kp-total-count">{odemeSayisi} ÖDEME</div>
+                    {ozet.gecikmisKurus > 0 && (
+                      <div className="kp-total-due">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
+                          <circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/>
+                        </svg>
+                        Gecikmiş
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Ödeme listesi */}
+            {bekleyenler.length > 0 && (
+              <div className="kp-list">
+                {bekleyenler.slice(0, 6).map(o => {
+                  const v = o.vadeTarihi?.toDate ? o.vadeTarihi.toDate() : new Date(o.vadeTarihi || 0);
+                  const tarihStr = isNaN(v.getTime()) ? '—' : v.toLocaleDateString('tr-TR', { day: '2-digit', month: 'short' });
+                  const gecikti = o.durum === 'gecikmis' || (v.getTime() < Date.now() - 86400000);
+                  return (
+                    <div className={`kp-item ${gecikti ? 'gecikti' : ''}`} key={o.id}>
+                      <div className="kp-item-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M3 21h18M5 21V7l7-4 7 4v14M9 21V11h6v10"/>
+                        </svg>
+                      </div>
+                      <div className="kp-item-mid">
+                        <div className="kp-item-title">{o.tip === 'kira' ? 'Kira' : (o.tip || 'Ödeme')}{o.aciklama ? ' · ' + o.aciklama.slice(0, 24) : ''}</div>
+                        <div className="kp-item-sub">Vade · {tarihStr}</div>
+                      </div>
+                      <div className="kp-item-amount">₺{Math.round((o.tutarKurus || 0) / 100).toLocaleString('tr-TR')}</div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+
+            {/* Upload CTA — modal'ı açar */}
+            <div className="kp-upload" onClick={() => setBildirimModal(true)}>
+              <div className="kp-upload-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/>
+                </svg>
+              </div>
+              <div className="kp-upload-baslik">Dekontu Yükle</div>
+              <div className="kp-upload-altyazi">PDF · JPG · PNG · MAKS 5MB</div>
             </div>
-          )}
-        </div>
 
-        {/* Cari Hesap */}
-        <div style={{
-          background: '#161a24', border: '1px solid #2a2f3e',
-          borderRadius: 14, padding: 16, marginBottom: 14,
-        }}>
-          <div style={{
-            fontFamily: 'Playfair Display,Georgia,serif',
-            fontSize: '.95rem', color: '#C9A84C', fontWeight: 600, marginBottom: 10,
-          }}>
-            💰 Cari Hesap
-          </div>
-          <div style={{ display: 'flex', justifyContent: 'space-between', padding: '6px 0', fontSize: '.82rem' }}>
-            <span style={{ color: '#888' }}>Toplam Tahakkuk:</span>
-            <b>{fmtTL(ozet.toplamBeklenenKurus + ozet.toplamOdenenKurus)}</b>
-          </div>
-          <div style={{ display: 'flex', justifyContent: 'space-between', padding: '6px 0', fontSize: '.82rem' }}>
-            <span style={{ color: '#888' }}>Toplam Ödenen:</span>
-            <b style={{ color: '#22C55E' }}>{fmtTL(ozet.toplamOdenenKurus)}</b>
-          </div>
-          <div style={{ display: 'flex', justifyContent: 'space-between', padding: '6px 0', fontSize: '.82rem', borderTop: '1px solid #2a2f3e', marginTop: 6 }}>
-            <span style={{ color: '#888' }}>Bakiye:</span>
-            <b style={{ color: borcVar ? '#EF4444' : '#22C55E' }}>{fmtTL(ozet.bakiyeKurus)}</b>
-          </div>
-        </div>
+            <button className="kp-btn" onClick={() => setBildirimModal(true)}>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/>
+              </svg>
+              Ödeme Bildir
+            </button>
+          </>
+        )}
 
-        {/* PDF indir */}
-        <button
-          onClick={() => window.print()}
-          style={{
-            width: '100%', padding: 12, marginBottom: 14,
-            background: 'transparent', color: '#C9A84C',
-            border: '1px solid #C9A84C', borderRadius: 10,
-            fontSize: '.85rem', cursor: 'pointer', minHeight: 44,
-          }}
-        >📄 Hesap Özetini İndir (PDF)</button>
-
-        {/* İletişim */}
-        {(k.telefon || mulk?.telefon) && (
-          <div style={{ display: 'flex', gap: 8, marginBottom: 14 }}>
-            <a href={`tel:${k.telefon || mulk?.telefon}`} style={{
-              flex: 1, padding: 12, textAlign: 'center',
-              background: '#161a24', color: '#22C55E',
-              border: '1px solid #2a2f3e', borderRadius: 10,
-              textDecoration: 'none', fontSize: '.82rem',
-            }}>📞 Ara</a>
-            <a href={`https://wa.me/${(k.telefon || '').replace(/\D/g, '')}`} target="_blank" rel="noreferrer" style={{
-              flex: 1, padding: 12, textAlign: 'center',
-              background: '#161a24', color: '#25D366',
-              border: '1px solid #2a2f3e', borderRadius: 10,
-              textDecoration: 'none', fontSize: '.82rem',
-            }}>💬 WhatsApp</a>
+        {basariMesaji && (
+          <div className="kp-success-card">
+            <div className="kp-check">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M20 6L9 17l-5-5"/>
+              </svg>
+            </div>
+            <h2 className="kp-success-title">Dekont <em>alındı</em></h2>
+            <p className="kp-success-msg">Teşekkürler {kiraciAdi}. Ev sahibinizin onayı dakikalar içinde gelecek.</p>
+            {basariModal?.referans && (
+              <div className="kp-success-ref">{basariModal.referans}</div>
+            )}
+            <button
+              className="kp-btn"
+              style={{ marginTop: 18 }}
+              onClick={() => setBasariModal(null)}
+            >Ana Sayfa</button>
           </div>
         )}
 
         {/* Footer */}
-        <div style={{ textAlign: 'center', color: '#555', fontSize: '.65rem', marginTop: 24 }}>
-          🔒 Güvenli Bağlantı · SSL Korumalı<br />
-          Son güncelleme: {new Date().toLocaleTimeString('tr-TR')}<br />
-          <span style={{ color: '#333' }}>Duay Global Trade — AI Property OS</span>
+        <div className="kp-foot">
+          <div className="kp-foot-left">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
+              <rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+            </svg>
+            256-BIT ŞIFRELI
+          </div>
+          <div className="kp-foot-right">EmlakPro · v1</div>
         </div>
       </div>
+
 
       {/* Bildirim modal */}
       {bildirimModal && (
