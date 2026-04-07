@@ -1,0 +1,145 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ═══ Yardımcı fonksiyonlar ═══
+    function authed() {
+      return request.auth != null;
+    }
+    function isOwner(docData) {
+      // workspaceId === uid (per-user isolation lite)
+      return authed() && docData.workspaceId == request.auth.uid;
+    }
+    function willOwn() {
+      return authed() && request.resource.data.workspaceId == request.auth.uid;
+    }
+    function getRole() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role;
+    }
+    function isAdmin() {
+      return authed() && (
+        getRole() == 'admin' || getRole() == 'super_admin'
+      );
+    }
+
+    // ═══ Kullanıcı profili — yalnız kendi dokümanı ═══
+    match /users/{uid} {
+      allow read: if authed() && (request.auth.uid == uid || isAdmin());
+      allow create, update: if authed() && request.auth.uid == uid
+        // role alanı kullanıcı tarafından değiştirilemez
+        && (!request.resource.data.diff(resource.data).affectedKeys().hasAny(['role']));
+      // Admin role değiştirebilir
+      allow update: if isAdmin();
+      allow delete: if isAdmin();
+    }
+
+    // ═══ İş verisi — workspaceId == uid izolasyonu ═══
+    match /mulkler/{id} {
+      allow read: if isOwner(resource.data) || isAdmin();
+      allow create: if willOwn();
+      allow update, delete: if isOwner(resource.data) || isAdmin();
+    }
+    match /kiralar/{id} {
+      allow read: if isOwner(resource.data) || isAdmin();
+      allow create: if willOwn();
+      allow update, delete: if isOwner(resource.data) || isAdmin();
+    }
+    match /kiracilar/{id} {
+      allow read: if isOwner(resource.data) || isAdmin();
+      allow create: if willOwn();
+      allow update, delete: if isOwner(resource.data) || isAdmin();
+    }
+    match /odemeler/{id} {
+      // Public yazma istisna: kportal kiracı self-servis ödeme
+      allow create: if willOwn()
+        || (request.resource.data.kaynak == 'kiraci_self'
+            && request.resource.data.durum == 'beklemede');
+      allow read: if isOwner(resource.data) || isAdmin();
+      allow update, delete: if isOwner(resource.data) || isAdmin();
+    }
+    match /alarmlar/{id} {
+      allow read: if isOwner(resource.data) || isAdmin();
+      allow create: if willOwn();
+      allow update, delete: if isOwner(resource.data) || isAdmin();
+    }
+    match /bildirimler/{id} {
+      allow read: if isOwner(resource.data) || isAdmin();
+      // Public create: kportal kiracı_odeme_bekliyor + tapu basvuru
+      allow create: if willOwn()
+        || request.resource.data.tip == 'kiraci_odeme_bekliyor'
+        || request.resource.data.tip == 'tapu_basvuru';
+      allow update, delete: if isOwner(resource.data) || isAdmin();
+    }
+    match /takvimOlaylari/{id} {
+      allow read: if isOwner(resource.data) || isAdmin();
+      allow create: if willOwn();
+      allow update, delete: if isOwner(resource.data) || isAdmin();
+    }
+    match /giderler/{id} {
+      allow read: if isOwner(resource.data) || isAdmin();
+      allow create: if willOwn();
+      allow update, delete: if isOwner(resource.data) || isAdmin();
+    }
+    match /yedekler/{id} {
+      allow read: if isOwner(resource.data) || isAdmin();
+      allow create: if willOwn();
+      allow update, delete: if isOwner(resource.data) || isAdmin();
+    }
+    match /islemLogu/{id} {
+      // Audit log: yazılır okunmaz (sadece admin)
+      allow create: if authed();
+      allow read: if isAdmin();
+      allow update, delete: if false;
+    }
+    match /versiyonlar/{id} {
+      allow read: if isOwner(resource.data) || isAdmin();
+      allow create: if willOwn();
+      allow update, delete: if false; // immutable
+    }
+    match /piyasaGecmisi/{id} {
+      allow read: if authed();
+      allow create: if willOwn();
+      allow update, delete: if isOwner(resource.data) || isAdmin();
+    }
+    match /katKarsiligiHesaplari/{id} {
+      allow read: if isOwner(resource.data) || isAdmin();
+      allow create: if willOwn();
+      allow update, delete: if isOwner(resource.data) || isAdmin();
+    }
+
+    // ═══ Public token-based collections ═══
+    match /paylasimlar/{id} {
+      // Public read with active token (token ile çözülür)
+      allow read: if true;
+      allow create: if willOwn();
+      allow update, delete: if isOwner(resource.data) || isAdmin();
+    }
+    match /tapuToplamaLinkleri/{id} {
+      allow read: if true; // public token lookup
+      allow create: if willOwn();
+      allow update, delete: if isOwner(resource.data) || isAdmin();
+    }
+    match /tapuBasvurulari/{id} {
+      // Public form yazar
+      allow create: if true;
+      allow read, update, delete: if isOwner(resource.data) || isAdmin();
+    }
+
+    // ═══ Trigger Email extension ═══
+    match /mail/{id} {
+      // Public form çift-yönlü email yazar (kiracı + admin)
+      allow create: if true;
+      allow read, update, delete: if false;
+    }
+
+    // ═══ Workspaces meta (admin only — paylaşımlı ws'ler için) ═══
+    match /workspaces/{id} {
+      allow read, write: if isAdmin();
+    }
+
+    // ═══ Default deny ═══
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

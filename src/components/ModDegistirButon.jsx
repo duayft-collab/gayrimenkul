@@ -3,10 +3,17 @@
  * @description Sürüm değiştirme butonu — sol alt köşe floating
  */
 import { useMod } from '../core/modStore';
+import { useAuthStore } from '../store/auth';
+import { isAdmin } from './RequireAdmin';
 
 export default function ModDegistirButon() {
   const sifirla = useMod(s => s.sifirla);
   const mod = useMod(s => s.mod);
+  const user = useAuthStore(s => s.user);
+
+  // ADMİN-ONLY: Mod değiştirme yetkisi yalnızca admin/super_admin'de.
+  // DOM'a hiç koymuyoruz — inspect ile bypass edilemez.
+  if (!isAdmin(user)) return null;
 
   const tikla = () => {
     const onay = window.confirm(

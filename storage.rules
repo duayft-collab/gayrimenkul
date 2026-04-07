@@ -1,0 +1,41 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+
+    function authed() { return request.auth != null; }
+    function ownerByPath(uid) {
+      return authed() && request.auth.uid == uid;
+    }
+    function validImageOrPdf() {
+      return request.resource.contentType.matches('image/.*')
+          || request.resource.contentType == 'application/pdf'
+          || request.resource.contentType.matches('application/.*officedocument.*');
+    }
+    function under5MB() { return request.resource.size < 5 * 1024 * 1024; }
+    function under10MB() { return request.resource.size < 10 * 1024 * 1024; }
+
+    // Mülk medya: workspaces/{ws}/mulkler/{mulkId}/...
+    // ws == uid → kullanıcı sandbox'ı
+    match /workspaces/{ws}/mulkler/{mulkId}/{kategori}/{file} {
+      allow read: if ownerByPath(ws);
+      allow write: if ownerByPath(ws) && under10MB() && validImageOrPdf();
+    }
+
+    // Tapu başvurusu (public form)
+    match /tapu-basvurulari/{ws}/{token}/{file} {
+      allow read: if true;
+      allow write: if under10MB() && validImageOrPdf();
+    }
+
+    // Kiracı portal dekont (public form)
+    match /kportal/{ws}/{kiraciId}/{file} {
+      allow read: if true;
+      allow write: if under5MB() && validImageOrPdf();
+    }
+
+    // Default deny
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}

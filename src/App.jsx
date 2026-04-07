@@ -240,13 +240,17 @@ function AppInner() {
 
   if (!user) return <Login />;
 
-  /* ═══ Çift-mod kontrol — mod yoksa seçim ekranı ═══ */
-  if (!mod) return <ModSecimi />;
+  /* ═══ Çift-mod kontrol ═══
+   * - Admin: mod yoksa ModSecimi seçim ekranı
+   * - Non-admin: otomatik 'yeni' moda zorlanır, seçim ekranı görünmez
+   */
+  const efektifMod = mod || (isAdmin(user) ? null : 'yeni');
+  if (!efektifMod) return <ModSecimi />;
 
   const PageComp = PAGES[page] || PAGES.dashboard;
 
-  /* ═══ KLASİK MOD — eski Sidebar layout ═══ */
-  if (mod === 'klasik') {
+  /* ═══ KLASİK MOD — eski Sidebar layout (admin-only) ═══ */
+  if (efektifMod === 'klasik') {
     return (
       <>
         <LayoutKlasik>
