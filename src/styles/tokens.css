@@ -691,3 +691,86 @@ h1.hero-title em {
 @media (min-width: 900px) {
   .g4 { grid-template-columns: repeat(4, 1fr); }
 }
+
+/* ═══════════════════════════════════
+   FOOTER · Refined override (yalnızca yeni modda yüklenir)
+   Temel footer-refined index.css'te tanımlı; bu sadece refined
+   tema değişkenleriyle uyumluluk sağlar.
+   ═══════════════════════════════════ */
+.footer-refined {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 40;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 8px 20px;
+  min-height: 36px;
+  background: color-mix(in oklab, var(--ink) 92%, transparent);
+  backdrop-filter: blur(20px) saturate(140%);
+  -webkit-backdrop-filter: blur(20px) saturate(140%);
+  border-top: 1px solid color-mix(in oklab, var(--ink) 85%, var(--accent) 15%);
+  color: color-mix(in oklab, #fafafa 88%, transparent);
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 11px;
+  letter-spacing: 0.02em;
+  font-feature-settings: "tnum" 1, "zero" 1;
+  box-shadow: 0 -4px 24px -8px rgba(0, 0, 0, 0.25);
+}
+[data-theme="dark"] .footer-refined {
+  background: color-mix(in oklab, #000 60%, transparent);
+  border-top-color: color-mix(in oklab, #fafafa 10%, transparent);
+}
+.footer-refined .fr-grup {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+.footer-refined .fr-nokta {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  background: #10b981;
+  box-shadow: 0 0 0 3px color-mix(in oklab, #10b981 25%, transparent);
+  animation: fr-puls 2.4s ease-in-out infinite;
+  margin-right: 6px;
+  vertical-align: middle;
+}
+.footer-refined .fr-nokta.uyari {
+  background: #f59e0b;
+  box-shadow: 0 0 0 3px color-mix(in oklab, #f59e0b 25%, transparent);
+}
+.footer-refined .fr-nokta.hata {
+  background: #ef4444;
+  box-shadow: 0 0 0 3px color-mix(in oklab, #ef4444 25%, transparent);
+}
+@keyframes fr-puls {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.6; transform: scale(0.85); }
+}
+.footer-refined .fr-etiket {
+  opacity: 0.55;
+  text-transform: uppercase;
+  font-size: 10px;
+}
+.footer-refined .fr-deger {
+  color: var(--accent);
+  font-weight: 500;
+}
+.footer-refined .fr-ayrac { opacity: 0.25; }
+.footer-refined .fr-kilit {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  opacity: 0.7;
+}
+@media (max-width: 768px) {
+  .footer-refined { font-size: 10px; padding: 6px 12px; min-height: 32px; }
+  .footer-refined .fr-grup { gap: 8px; }
+  .footer-refined .fr-etiket { display: none; }
+}
