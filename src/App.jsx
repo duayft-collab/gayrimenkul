@@ -37,6 +37,11 @@ import { marketBootstrap } from './core/marketBootstrap';
 import { Sidebar, Toasts, Modal } from './components/Layout';
 import TopNav from './components/TopNav';
 import ThemeToggle from './components/ThemeToggle';
+import LayoutKlasik from './components/LayoutKlasik';
+import ModDegistirButon from './components/ModDegistirButon';
+import ModSecimi from './pages/ModSecimi';
+import { useMod } from './core/modStore';
+import { useTema } from './core/temaStore';
 import StatusBar from './components/StatusBar';
 import CommandPalette from './components/CommandPalette';
 import AIAsistan from './components/AIAsistan';
@@ -110,9 +115,20 @@ function AppInner() {
   const { user, loading, init: authInit } = useAuthStore();
   const store = useStore();
   const { page, init, destroy, undo } = store;
+  const mod = useMod(s => s.mod);
 
   /* Service worker + PWA */
   useEffect(() => { registerServiceWorker(); }, []);
+
+  /* Yeni modda tokens.css dinamik yükle (idempotent) */
+  useEffect(() => {
+    if (mod === 'yeni' && !window.__refinedYuklendi) {
+      import('./styles/tokens.css').then(() => {
+        window.__refinedYuklendi = true;
+        useTema.getState().baslat();
+      });
+    }
+  }, [mod]);
 
   /* Canlı piyasa verisi — 2dk auto-refresh (user login'den bağımsız başlat) */
   useEffect(() => {
@@ -223,8 +239,30 @@ function AppInner() {
   );
 
   if (!user) return <Login />;
+
+  /* ═══ Çift-mod kontrol — mod yoksa seçim ekranı ═══ */
+  if (!mod) return <ModSecimi />;
+
   const PageComp = PAGES[page] || PAGES.dashboard;
 
+  /* ═══ KLASİK MOD — eski Sidebar layout ═══ */
+  if (mod === 'klasik') {
+    return (
+      <>
+        <LayoutKlasik>
+          <PageComp />
+        </LayoutKlasik>
+        <Toasts />
+        <Modal />
+        <CommandPalette />
+        <AIAsistan />
+        <StatusBar />
+        <ModDegistirButon />
+      </>
+    );
+  }
+
+  /* ═══ YENİ MOD — Refined TopNav layout ═══ */
   return (
     <>
       <div className="mesh" />
@@ -241,6 +279,7 @@ function AppInner() {
       <AIAsistan />
       <StatusBar />
       <ThemeToggle />
+      <ModDegistirButon />
     </>
   );
 }
