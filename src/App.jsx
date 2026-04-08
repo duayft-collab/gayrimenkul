@@ -24,7 +24,7 @@ import TapuToplamaForm from './pages/TapuToplamaForm';
 import KiraciPortal from './pages/KiraciPortal';
 import HesapMakineleri from './pages/HesapMakineleri';
 import VergiPaneli from './pages/VergiPaneli';
-import KatKarsiligiModul from './components/KatKarsiligi';
+import KatKarsiligiModul from './components/katkarsiligi';
 import IslemGecmisi from './pages/IslemGecmisi';
 import Yedekler from './pages/Yedekler';
 import Guvenlik from './pages/Guvenlik';
